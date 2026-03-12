@@ -1,0 +1,31 @@
+Andrei Stoian
+Sunshine Coast, QLD
+0422485860 | stoian.andrei.mircea@gmail.com
+
+12 March 2026
+
+Simon Gilbert
+Manager Engagement and Innovation Services
+University of the Sunshine Coast
+
+Re: Application for Senior Enterprise Architect (Position 493891)
+
+Dear Simon Gilbert and Selection Panel,
+
+I am applying for the Senior Enterprise Architect role at UniSC because this is exactly the work I am already delivering in the University context: architecting teams, processes, and data end to end so strategy can be translated into secure, reliable, and measurable institutional outcomes.
+
+In my current role at UniSC as Manager, Business Intelligence and Data Warehousing, I have led architecture uplift across governance, platform, and decision-support capabilities. This has included establishing enterprise data governance foundations using higher education data reference model principles, implementing Microsoft Purview for enterprise discovery and classification of sensitive data, and defining stewardship domains and governance accountabilities in partnership with Privacy, IT, and business owners.
+
+I have also led architecture and operating-model design for the University's data platform and analytics capability, including Azure Synapse optimisation, medallion architecture implementation, and meta-driven design patterns that improve assurance, lineage, reproducibility, and scalability. On top of platform architecture, I have driven the visualisation architecture layer through governed Power BI semantic models and trusted metrics that support executive planning, performance monitoring, and strategic investment decisions.
+
+A core part of my leadership has been cross-portfolio engagement and team architecture. I have recruited and shaped multidisciplinary capability across engineering and visualisation, aligned delivery with institutional priorities, and produced architecture artefacts and diagrams that make complex systems understandable for both technical and non-technical stakeholders. I bring a practical architecture style: systems thinking, fit-for-purpose operating models, and clear governance that supports delivery rather than slowing it down.
+
+Before UniSC, my work across New Zealand ministries strengthened my approach to risk-aware decision support and compliance by design in regulated environments. That experience is directly relevant to architecture assurance, statutory obligations, and strategic governance in a complex higher education setting.
+
+I am motivated by the opportunity to continue building UniSC's enterprise architecture maturity and to help realise the University's strategic plan through connected capability, trusted data, and coherent technology direction.
+
+Thank you for your consideration. I would welcome the opportunity to discuss how I can contribute in this role.
+
+Kind regards,
+
+Andrei Stoian
