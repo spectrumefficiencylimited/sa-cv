@@ -1,0 +1,31 @@
+Andrei Stoian
+Sunshine Coast, QLD
+0422485860 | stoian.andrei.mircea@gmail.com
+
+25 March 2026
+
+Gillian McCloskey
+Paddock to Reef Catchment Modelling Team
+Queensland Government
+
+Dear Gillian,
+
+Re: Senior Catchment Modeller — Paddock to Reef Catchment Modelling Team
+
+I am writing to apply for the Senior Catchment Modeller position. This role sits at the intersection of two things I care about deeply: rigorous quantitative science and the long-term health of the Great Barrier Reef — and it is no coincidence that those two things brought me to Queensland in the first place.
+
+I have been fascinated by coral reef ecosystems since long before I arrived in Australia. The Great Barrier Reef was not an abstraction to me — it was a reason. When I made the decision to move to Queensland, it was in large part because I wanted to live near and contribute to the protection of one of the most extraordinary natural systems on the planet. That personal conviction now has a professional home, and the Paddock to Reef programme represents exactly the kind of applied science I want to be part of.
+
+My technical background is in quantitative modelling, data pipeline development, and evidence-based reporting across complex environmental and institutional datasets. Most recently, I undertook a project secondment with the Pacific Community's Oceanic Fisheries Programme in Noumea, where I developed statistical models estimating total annual fish catch by country and fishing type across the Western and Central Pacific Ocean. I built the data quality routines, integrated multi-country reporting datasets, and produced the catch estimates that fed directly into the annual fisheries reporting cycle for the Western and Central Pacific Fisheries Commission. Working at that scale — where model outputs translate directly into international policy advice — gave me a clear appreciation of the responsibility that comes with producing science for high-stakes annual reporting. I returned to Australia on completion of that project.
+
+Prior to and following that secondment, I have been leading the enterprise analytics and modelling function at the University of the Sunshine Coast, where I design and govern data models, statistical reporting workflows, and performance measurement systems that inform strategic decisions at an institutional level. Across my career I have worked in R and Python for statistical modelling, time-series analysis, and reproducible analytical pipelines — tools central to catchment modelling work. I am highly experienced in integrating large, multi-source datasets, applying data quality frameworks, and communicating complex model outputs clearly to both technical and non-technical audiences including senior government stakeholders.
+
+I understand that the Paddock to Reef programme produces modelled estimates of water quality improvements tied to land management practice changes across GBR basins, and that these outputs feed directly into the annual Reef Report Card. I am motivated by that cycle — the discipline of annual delivery, the scientific rigour required, and the real-world consequence of getting it right for reef water quality targets. I am also well-suited to the stakeholder engagement dimension of the role, having represented analytical findings in advisory forums and collaborated with scientists, government bodies, and regional stakeholders throughout my career.
+
+I would welcome the opportunity to contribute to this programme and to work on science that matters to Queensland's most iconic natural asset. I have attached my resume and am happy to provide any additional information.
+
+Thank you for considering my application.
+
+Yours sincerely,
+
+Andrei Stoian

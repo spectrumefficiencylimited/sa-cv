@@ -1,0 +1,114 @@
+Andrei Stoian
+Sunshine Coast, QLD
+0422485860 | stoian.andrei.mircea@gmail.com
+
+13 March 2026
+
+Re: Statement of Suitability — Senior Enterprise Architect (Position 493891)
+University of the Sunshine Coast
+
+---
+
+CRITERION 1: Relevant postgraduate qualification and substantial enterprise architecture experience
+
+I hold a Master of Digital Transformation and Leadership from Victoria University of Wellington, complemented by a Bachelor of Telecommunications Engineering. My postgraduate study grounded me not just in technical transformation but in the human and organisational dynamics that determine whether architecture actually takes root — or quietly fades after the project closes.
+
+That question drives how I approach this work. Good enterprise architecture should leave an institution more capable, more confident, and better equipped to serve its people than it found it. It should outlast any individual's tenure. Over more than ten years across higher education and government, I have held progressively senior roles in architecture, data strategy, and platform delivery with that principle at the centre. In my current role at UniSC, I lead architecture-aligned uplift spanning data governance, platform design, and analytics capability — work I approach as institution-building, not just delivery.
+
+---
+
+CRITERION 2: Demonstrated success developing and delivering enterprise-wide architecture strategy and multi-year roadmaps in complex environments
+
+At UniSC, I established an enterprise architecture-aligned data and analytics operating model to support strategic planning, service delivery, and institutional investment 
+decisions. I developed and delivered a multi-year architecture roadmap for the University's data platform capability, sequencing platform priorities, 
+capability uplift, and governance maturity in alignment with institutional priorities.
+
+A multi-year roadmap is also a legacy artefact. Its value is not just in directing the next sprint — it is in giving future teams a clear, documented rationale for why 
+decisions were made, what was deferred and why, and what the institution committed to building toward. I design roadmaps with that durability in mind: structured so
+ that a team member who joins three years from now can pick up the thread, understand the intent, and continue building in the same direction.
+
+This involved partnering with academic and professional portfolios to align business capabilities, processes, and technology investments into a coherent forward direction. I have led the end-to-end architecture of Azure Synapse as the University's enterprise data warehousing foundation, implementing medallion architecture patterns and meta-driven design to ensure scalability, assurance, and long-term sustainability.
+
+In earlier roles across New Zealand government, I contributed to architecture strategy for national data platforms, including a multi-agency shared data platform integrating vocational education and workforce intelligence datasets for 30+ analysts.
+
+---
+
+CRITERION 3: Deep technical architecture expertise across hybrid cloud and on-premise environments, particularly within Microsoft, Windows and Linux ecosystems
+
+I have deep hands-on expertise across the Microsoft ecosystem, including Azure Synapse Analytics, Microsoft Purview, Power BI, and Azure Data Lake. At UniSC, I led the implementation and optimisation of Azure Synapse as the enterprise data warehousing foundation, integrating cloud-native services with on-premise and hybrid data sources.
+
+I led the Microsoft Purview implementation to operationalise enterprise data discovery, classification, and information risk visibility — a governance-critical capability spanning cloud and on-premise environments. I also have applied experience with Linux-based environments through containerised workloads using Docker and data engineering pipelines across Databricks and Snowflake.
+
+My architecture approach routinely addresses hybrid integration patterns, platform reliability, security controls, and operational sustainability across cloud and on-premise environments.
+
+---
+
+CRITERION 4: Strong capability mapping and systems thinking, aligning business capability, data, applications and infrastructure to strategic outcomes
+
+I approach enterprise architecture as a systems problem: understanding how business capabilities, information flows, application services, and infrastructure interact to produce institutional outcomes. But a capability map is not just a diagram — it is a tool for enabling the people who work within those capabilities. When staff can see clearly how their work connects to institutional strategy, what data they can trust, and what platforms are available to them, they are freed to focus on what they are actually here to do: teach, research, support students, and grow the University.
+
+At UniSC, I produced architecture artefacts, capability maps, and delivery diagrams to make this interconnection visible and actionable for both technical and executive audiences. I built data governance foundations using higher education data reference model principles, mapping ownership, standards, and policy obligations across capability domains. I have co-defined stewardship domains and governance accountabilities in partnership with Privacy, IT, and business owners — translating institutional obligations into capability design and platform controls.
+
+My operating model and roadmap work translates strategic ambitions into sequenced capability investments, ensuring that technology decisions are grounded in business need and measurable outcomes — and that the people delivering those outcomes have clear, supportable platforms to work from.
+
+---
+
+CRITERION 5: Experience influencing governance processes and guiding strategic investment through architecture assurance
+
+At UniSC, I implemented governance controls and architecture assurance processes for sensitive and executive-facing information assets, including oversight of the University's data classification and information risk posture through Microsoft Purview.
+
+I have contributed architectural input to leadership forums and investment decision processes, providing evidence-based advice that shapes platform priorities and resource allocation. I have led governance design at the capability level — defining data stewardship, ownership accountabilities, and quality assurance controls — with a deliberate intent to make governance a source of confidence for staff rather than a source of friction. When people trust the data they are working with and understand the rules around it, they engage more freely, report more accurately, and make better decisions. Good governance is ultimately about enabling people safely.
+
+My architecture communication style — using capability maps, roadmaps, and plain-language summaries — has enabled senior leaders to understand architecture tradeoffs and make informed investment decisions with confidence.
+
+---
+
+CRITERION 6: Sound understanding of cybersecurity, compliance and statutory requirements in regulated environments
+
+I have applied compliance-by-design principles throughout my architecture work, particularly in relation to Queensland privacy obligations, information classification, and data sovereignty. At UniSC, I co-defined stewardship domains aligned to statutory privacy requirements and implemented platform controls to reduce information risk.
+
+In New Zealand government roles, I worked within regulated environments requiring rigorous data handling, audit trails, and compliance with public sector information standards. At MBIE, I delivered compliance-focused audit processes and automated controls in radio spectrum licensing — a domain with direct regulatory obligations.
+
+My familiarity with NIST and COBIT informs how I integrate security and compliance thinking into architecture design from the outset, rather than as a late addition.
+
+---
+
+CRITERION 7: Demonstrated application of recognised architecture and delivery frameworks (TOGAF, ITIL, COBIT, NIST, Agile/DevOps)
+
+I apply TOGAF principles to structure architecture thinking — particularly around capability views, transition architectures, and governance. ITIL informs my approach to service design and operational sustainability. COBIT and NIST guide my risk management and security architecture thinking. I have delivered in Agile sprint environments across government and higher education, and apply DevOps practices in platform engineering and data pipeline delivery.
+
+In the higher education context specifically, I draw on CAUDIT guidance and the Higher Education Reference Model (HERM) to ensure architecture decisions are grounded in sector-relevant capability frameworks. HERM has directly informed my approach to data governance at UniSC — structuring ownership, stewardship, and policy alignment around a reference model that reflects how universities actually operate, rather than importing patterns from unrelated industries. I also incorporate Business Continuity Planning (BCP) and Disaster Recovery Management (DRM) principles into architecture design, treating resilience and continuity as first-class architectural concerns rather than operational afterthoughts. For a university, the cost of unplanned downtime is not just technical — it affects students, staff, and the institution's ability to meet its obligations.
+
+My use of these frameworks is practical and contextual — I apply what is fit for purpose for the environment rather than enforcing compliance overhead for its own sake. The goal is always coherent architecture outcomes that enable delivery, protect people, and reduce complexity.
+
+---
+
+CRITERION 8: Exceptional communication skills with the ability to translate complex architecture into executive insight and organisational alignment
+
+I regularly communicate architecture direction across a wide range of audiences — from technical engineers to senior executives and board-facing leadership. At UniSC, I produce capability maps, platform diagrams, and roadmap summaries that make architectural intent clear and actionable for non-technical stakeholders.
+
+I have presented architecture recommendations at leadership forums, supported strategic investment cases with architecture evidence, and led cross-portfolio conversations that build shared understanding and alignment. My approach to communication is to lead with organisational impact — what does this architecture decision mean for the University's capability, risk, or investment? — rather than leading with technical detail.
+
+Underlying this is a genuine commitment to enabling colleagues. When people across the University understand the architecture — not the full technical depth, but the intent, the constraints, the direction — they make better local decisions. They stop re-solving problems that have already been solved. They build on shared platforms rather than around them. I find this kind of organisational lift deeply satisfying, and I invest real effort in it.
+
+---
+
+CRITERION 9: Experience in the Australian higher education sector (desirable)
+
+I am currently employed at UniSC, where I have worked since July 2023. I have direct experience with higher education data governance, planning and reporting frameworks, student and research data environments, and the institutional dynamics that shape architecture priorities in a university context.
+
+Higher education matters to me beyond its technical complexity. A university's technology environment is not just an operational concern — it shapes what staff can do, what researchers can discover, and what students experience. I take that seriously. The decisions made at the architecture level today determine whether the people working here in five or ten years have foundations they can build confidently on, or fragile systems they have to work around. I want to be the person who builds the former.
+
+My familiarity with the Australian higher education landscape — including TEQSA obligations, the Higher Education Data Collection, and the sector's growing focus on digital transformation — means I can provide architecture leadership that is immediately relevant to UniSC's strategic context without a ramp-up period.
+
+---
+
+What motivates me most about this role is the opportunity to build something that lasts. Not a project that closes, or a platform that is replaced in three years, but an enterprise architecture practice that gives UniSC a durable, shared understanding of itself — its capabilities, its dependencies, its direction — so that every team, leader, and investment decision benefits from that clarity.
+
+I care about the people who will inherit this work: the analysts who will use the platforms, the leaders who will make decisions from the data, the architects who will extend the roadmaps. I want to leave them with something genuinely useful and well-reasoned. That sense of stewardship is not separate from technical excellence — it shapes every design decision, every governance conversation, every artefact I produce.
+
+I am already part of UniSC. I know this institution, I am invested in its success, and I am ready to bring the full scope of my enterprise architecture capability to bear on its future.
+
+Kind regards,
+
+Andrei Stoian

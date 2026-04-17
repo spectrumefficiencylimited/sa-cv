@@ -1,0 +1,2378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Capability Portfolio</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --ink: #172126;
+      --muted: #4f5f66;
+      --panel: rgba(255, 252, 247, 0.86);
+      --line: rgba(23, 33, 38, 0.12);
+      --shadow: 0 20px 70px rgba(13, 29, 35, 0.12);
+      --architecture: #0f766e;
+      --analytics: #b45309;
+      --governance: #1d4ed8;
+      --platform: #7c3aed;
+      --leadership: #be185d;
+      --engineering: #475569;
+      --root: #172126;
+      --chip: rgba(255, 255, 255, 0.74);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      color: var(--ink);
+      font-family: "Aptos", "Trebuchet MS", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(29, 78, 216, 0.16), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(190, 24, 93, 0.14), transparent 28%),
+        linear-gradient(180deg, #f9f5ee 0%, var(--bg) 100%);
+    }
+
+    .page-shell {
+      width: min(1380px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    .hero,
+    .graph-card,
+    .detail-card,
+    .footnote {
+      background: var(--panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      animation: rise-in 700ms ease both;
+    }
+
+    .hero {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -70px auto;
+      width: 300px;
+      height: 300px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.16), rgba(180, 83, 9, 0.12));
+      filter: blur(4px);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 0.76rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", serif;
+      font-weight: 600;
+      line-height: 1.1;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 4vw, 3.9rem);
+      max-width: 820px;
+    }
+
+    .hero-copy {
+      margin: 14px 0 0;
+      max-width: 860px;
+      font-size: 1.02rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-card {
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(23, 33, 38, 0.08);
+      border-radius: 18px;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .stat-label {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-bar {
+      margin-top: 18px;
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(23, 33, 38, 0.08);
+      border-radius: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .timeline-copy {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .timeline-year {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--ink);
+      min-width: 64px;
+      text-align: right;
+    }
+
+    .timeline-slider {
+      width: 100%;
+      accent-color: var(--ink);
+      cursor: pointer;
+    }
+
+    .timeline-scale {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .filter-chip {
+      border: 1px solid rgba(23, 33, 38, 0.12);
+      background: var(--chip);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+    }
+
+    .filter-chip:hover,
+    .filter-chip:focus-visible {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .filter-chip.active {
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 10px 24px rgba(23, 33, 38, 0.18);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.9fr);
+      gap: 20px;
+      margin-top: 20px;
+      align-items: start;
+    }
+
+    .graph-card {
+      padding: 20px;
+      min-height: 840px;
+      animation-delay: 90ms;
+    }
+
+    .detail-card {
+      padding: 22px;
+      position: sticky;
+      top: 20px;
+      animation-delay: 160ms;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 12px;
+    }
+
+    .section-note {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 740px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+    }
+
+    .graph-shell {
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      min-height: 740px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(248, 243, 235, 0.86)),
+        linear-gradient(90deg, rgba(23, 33, 38, 0.03) 1px, transparent 1px),
+        linear-gradient(rgba(23, 33, 38, 0.03) 1px, transparent 1px);
+      background-size: auto, 28px 28px, 28px 28px;
+      border: 1px solid rgba(23, 33, 38, 0.08);
+    }
+
+    #graph {
+      width: 100%;
+      min-height: 740px;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .link {
+      stroke-opacity: 0.38;
+      stroke-width: 1.4;
+      transition: opacity 160ms ease;
+    }
+
+    .node-group {
+      cursor: pointer;
+    }
+
+    .node-circle {
+      stroke: rgba(255, 255, 255, 0.95);
+      stroke-width: 2;
+      transition: transform 180ms ease, opacity 180ms ease, stroke 180ms ease;
+    }
+
+    .node-halo {
+      fill: none;
+      stroke-width: 2;
+      opacity: 0;
+      transition: opacity 180ms ease;
+    }
+
+    .node-group.is-selected .node-circle,
+    .node-group:hover .node-circle {
+      transform: scale(1.06);
+      stroke: rgba(23, 33, 38, 0.18);
+    }
+
+    .node-group.is-selected .node-halo,
+    .node-group:hover .node-halo {
+      opacity: 0.9;
+    }
+
+    .node-label {
+      text-anchor: middle;
+      pointer-events: none;
+      fill: var(--ink);
+      font-weight: 600;
+      paint-order: stroke;
+      stroke: rgba(255, 250, 244, 0.95);
+      stroke-width: 4;
+      stroke-linejoin: round;
+    }
+
+    .detail-card h2 {
+      font-size: 1.8rem;
+    }
+
+    .detail-copy {
+      margin: 14px 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .meta-line {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 6px 0 16px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 0.82rem;
+      border: 1px solid rgba(23, 33, 38, 0.09);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .detail-list,
+    .tool-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .detail-section {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .detail-section h3 {
+      font-size: 1.02rem;
+      margin-bottom: 10px;
+    }
+
+    .detail-list li {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid rgba(23, 33, 38, 0.06);
+      line-height: 1.5;
+    }
+
+    .footnote {
+      margin-top: 20px;
+      padding: 18px 22px;
+      color: var(--muted);
+      line-height: 1.65;
+      animation-delay: 240ms;
+    }
+
+    .tooltip {
+      position: fixed;
+      inset: 0 auto auto 0;
+      max-width: 290px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(23, 33, 38, 0.92);
+      color: #f7f3ea;
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.22);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 120ms ease, transform 120ms ease;
+      z-index: 40;
+    }
+
+    .tooltip strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.96rem;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes rise-in {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page-shell {
+        width: min(100vw - 18px, 1380px);
+        padding: 18px 0 28px;
+      }
+
+      .hero,
+      .graph-card,
+      .detail-card,
+      .footnote {
+        border-radius: 20px;
+      }
+
+      .hero,
+      .graph-card,
+      .detail-card {
+        padding: 18px;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .section-head {
+        flex-direction: column;
+        align-items: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <section class="hero">
+      <p class="eyebrow">Capability portfolio</p>
+      <h1>Fifteen plus years of data work, shown as one coherent system.</h1>
+      <p class="hero-copy">
+        This portfolio reframes the career as a connected capability model rather than a stack of unrelated job titles.
+        It now includes the engineering foundation underneath the later data leadership story and the newer delivery proof
+        behind platform standards, cyber assurance, forecasting value, and capability uplift. Click a domain to isolate it.
+        Click any node to inspect the evidence behind it.
+      </p>
+      <div class="stat-grid" id="stat-grid"></div>
+      <div class="filter-bar" id="filter-bar"></div>
+      <div class="timeline-bar">
+        <div class="timeline-head">
+          <div class="timeline-copy" id="timeline-copy">Evolution view</div>
+          <div class="timeline-year" id="timeline-year">2026</div>
+        </div>
+        <input class="timeline-slider" id="timeline-slider" type="range" min="2005" max="2026" step="1" value="2026" />
+        <div class="timeline-scale">
+          <span id="timeline-min">2005</span>
+          <span id="timeline-max">2026</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <section class="graph-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Three-level model</p>
+            <h2>Grandfather -> Father -> Child</h2>
+            <p class="section-note">
+              Domain nodes are the strategic identity. Capability nodes show repeatable operating strengths. Evidence nodes
+              anchor everything from early RF engineering, testing, and telecommunications work through UniSC, Te Whatu Ora,
+              Spectrum Efficiency, Ministry of Education, MBIE, and Spark NZ, including engineering controls, security
+              assurance, reporting evidence models, and quantified forecasting outcomes.
+            </p>
+          </div>
+        </div>
+        <div class="graph-shell">
+          <div id="graph"></div>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot" style="background: var(--architecture);"></span>Enterprise data architecture</span>
+          <span class="legend-item"><span class="legend-dot" style="background: var(--analytics);"></span>Decision intelligence and analytics</span>
+          <span class="legend-item"><span class="legend-dot" style="background: var(--governance);"></span>Governance and trust systems</span>
+          <span class="legend-item"><span class="legend-dot" style="background: var(--platform);"></span>Platform engineering and enablement</span>
+          <span class="legend-item"><span class="legend-dot" style="background: var(--leadership);"></span>Leadership and capability building</span>
+          <span class="legend-item"><span class="legend-dot" style="background: var(--engineering);"></span>Telecommunications and systems engineering</span>
+        </div>
+      </section>
+
+      <aside class="detail-card">
+        <div id="detail-panel"></div>
+      </aside>
+    </div>
+
+    <section class="footnote">
+      Keep the narrative human. Tailoring should change emphasis, not facts. The supporting docs for this system live in
+      <strong>`Cv/master_capability_tree.md`</strong> and <strong>`Cv/base_cv_template.md`</strong>, while each targeted
+      application should live in its own folder under <strong>`jobs/`</strong>.
+    </section>
+  </div>
+
+  <div id="tooltip" class="tooltip" aria-hidden="true"></div>
+
+  <script>
+    const domainMeta = {
+      architecture: {
+        label: "Enterprise Data Architecture",
+        color: getComputedStyle(document.documentElement).getPropertyValue("--architecture").trim(),
+        summary: "Systems thinking, modelling, integration patterns, and operating model design."
+      },
+      analytics: {
+        label: "Decision Intelligence and Analytics",
+        color: getComputedStyle(document.documentElement).getPropertyValue("--analytics").trim(),
+        summary: "Forecasting, KPI systems, executive reporting, and applied data science."
+      },
+      governance: {
+        label: "Data Governance and Trust Systems",
+        color: getComputedStyle(document.documentElement).getPropertyValue("--governance").trim(),
+        summary: "Stewardship, privacy, compliance, auditability, and trust-by-design."
+      },
+      platform: {
+        label: "Platform Engineering and Enablement",
+        color: getComputedStyle(document.documentElement).getPropertyValue("--platform").trim(),
+        summary: "Data platforms, pipelines, semantic layers, and self-service delivery."
+      },
+      leadership: {
+        label: "Leadership and Capability Building",
+        color: getComputedStyle(document.documentElement).getPropertyValue("--leadership").trim(),
+        summary: "Executive partnering, team leadership, mentoring, and maturity uplift."
+      },
+      engineering: {
+        label: "Telecommunications and Systems Engineering",
+        color: getComputedStyle(document.documentElement).getPropertyValue("--engineering").trim(),
+        summary: "RF planning, field validation, interference analysis, and systems testing that underpin later platform and architecture work."
+      }
+    };
+
+    /*
+    const layerMeta = {
+      root: { radius: 22, ring: 0, fontSize: 15 },
+      domain: { radius: 18, ring: 165, fontSize: 12.5 },
+      capability: { radius: 12, ring: 315, fontSize: 11.5 },
+      evidence: { radius: 8, ring: 455, fontSize: 10.5 }
+    };
+
+    const nodeMap = new Map(portfolio.nodes.map((node) => [node.id, node]));
+    let activeFilter = "all";
+    let selectedNode = nodeMap.get("root");
+
+    const stats = [
+      { value: "15+", label: "Years across data, analytics, and systems" },
+      { value: "6", label: "Strategic domains carried across the career" },
+      { value: "18", label: "Repeatable capability layers in the model" },
+      { value: "11", label: "Roles contributing evidence to the portfolio" }
+    ];
+
+    document.getElementById("stat-grid").innerHTML = stats
+      .map((item) => `<div class="stat-card"><span class="stat-value">${item.value}</span><span class="stat-label">${item.label}</span></div>`)
+      .join("");
+
+    const filterBar = document.getElementById("filter-bar");
+    const tooltip = document.getElementById("tooltip");
+    const detailPanel = document.getElementById("detail-panel");
+    const timelineSlider = document.getElementById("timeline-slider");
+    const timelineYear = document.getElementById("timeline-year");
+    const timelineCopy = document.getElementById("timeline-copy");
+    const timelineMin = document.getElementById("timeline-min");
+    const timelineMax = document.getElementById("timeline-max");
+
+    function getNodeStartYear(node) {
+      if (typeof node.yearStart === "number") {
+        return node.yearStart;
+      }
+      if (node.years) {
+        const match = node.years.match(/\b(19|20)\d{2}\b/);
+        if (match) {
+          return Number(match[0]);
+        }
+      }
+      return null;
+    }
+
+    const evidenceYears = portfolio.nodes
+      .filter((node) => node.layer === "evidence")
+      .map((node) => getNodeStartYear(node))
+      .filter((year) => typeof year === "number");
+
+    const timelineState = {
+      min: Math.min(...evidenceYears),
+      max: Math.max(...evidenceYears),
+      current: Math.max(...evidenceYears)
+    };
+
+    timelineSlider.min = timelineState.min;
+    timelineSlider.max = timelineState.max;
+    timelineSlider.value = timelineState.current;
+    timelineMin.textContent = String(timelineState.min);
+    timelineMax.textContent = String(timelineState.max);
+    const timelineSlider = document.getElementById("timeline-slider");
+    const timelineYear = document.getElementById("timeline-year");
+    const timelineCopy = document.getElementById("timeline-copy");
+    const timelineMin = document.getElementById("timeline-min");
+    const timelineMax = document.getElementById("timeline-max");
+
+    function getNodeStartYear(node) {
+      if (typeof node.yearStart === "number") {
+        return node.yearStart;
+      }
+      if (node.years) {
+        const match = node.years.match(/\b(19|20)\d{2}\b/);
+        if (match) {
+          return Number(match[0]);
+        }
+      }
+      return null;
+    }
+
+    const evidenceYears = portfolio.nodes
+      .filter((node) => node.layer === "evidence")
+      .map((node) => getNodeStartYear(node))
+      .filter((year) => typeof year === "number");
+
+    const timelineState = {
+      min: Math.min(...evidenceYears),
+      max: Math.max(...evidenceYears),
+      current: Math.max(...evidenceYears)
+    };
+
+    timelineSlider.min = timelineState.min;
+    timelineSlider.max = timelineState.max;
+    timelineSlider.value = timelineState.current;
+    timelineMin.textContent = String(timelineState.min);
+    timelineMax.textContent = String(timelineState.max);
+    const timelineSlider = document.getElementById("timeline-slider");
+    const timelineYear = document.getElementById("timeline-year");
+    const timelineCopy = document.getElementById("timeline-copy");
+    const timelineMin = document.getElementById("timeline-min");
+    const timelineMax = document.getElementById("timeline-max");
+
+    function getNodeStartYear(node) {
+      if (typeof node.yearStart === "number") {
+        return node.yearStart;
+      }
+      if (node.years) {
+        const match = node.years.match(/\b(19|20)\d{2}\b/);
+        if (match) {
+          return Number(match[0]);
+        }
+      }
+      return null;
+    }
+
+    const evidenceYears = portfolio.nodes
+      .filter((node) => node.layer === "evidence")
+      .map((node) => getNodeStartYear(node))
+      .filter((year) => typeof year === "number");
+
+    const timelineState = {
+      min: Math.min(...evidenceYears),
+      max: Math.max(...evidenceYears),
+      current: Math.max(...evidenceYears)
+    };
+
+    timelineSlider.min = timelineState.min;
+    timelineSlider.max = timelineState.max;
+    timelineSlider.value = timelineState.current;
+    timelineMin.textContent = String(timelineState.min);
+    timelineMax.textContent = String(timelineState.max);
+
+    function domainColor(node) {
+      if (!node || node.layer === "root") {
+        return getComputedStyle(document.documentElement).getPropertyValue("--root").trim();
+      }
+      return domainMeta[node.domain].color;
+    }
+
+    function nodeMatchesFilter(node) {
+      return activeFilter === "all" || node.layer === "root" || node.domain === activeFilter;
+    }
+
+    function getLinkNodeId(linkEnd) {
+      return typeof linkEnd === "object" ? linkEnd.id : linkEnd;
+    }
+
+    function connectedChildren(nodeId) {
+      return portfolio.links
+        .filter((link) => getLinkNodeId(link.source) === nodeId)
+        .map((link) => nodeMap.get(getLinkNodeId(link.target)))
+        .filter(Boolean);
+    }
+
+    function nodeMatchesTimeline(node) {
+      if (node.layer === "root") {
+        return true;
+      }
+      if (node.layer === "evidence") {
+        const startYear = getNodeStartYear(node);
+        return startYear === null || startYear <= timelineState.current;
+      }
+      return connectedChildren(node.id).some((child) => nodeMatchesTimeline(child));
+    }
+
+    function nodeVisible(node) {
+      return nodeMatchesFilter(node) && nodeMatchesTimeline(node);
+    }
+
+    function fallbackSelection() {
+      if (activeFilter !== "all") {
+        const domainNode = nodeMap.get(activeFilter);
+        if (domainNode && nodeVisible(domainNode)) {
+          return domainNode;
+        }
+      }
+      return nodeMap.get("root");
+    }
+
+    function ensureSelectionVisible() {
+      if (!nodeVisible(selectedNode)) {
+        selectedNode = fallbackSelection();
+      }
+    }
+
+    function updateTimelineUI() {
+      timelineYear.textContent = String(timelineState.current);
+      timelineCopy.textContent = `Evidence accumulated through ${timelineState.current}`;
+    }
+
+    function nodeMatchesTimeline(node) {
+      if (node.layer === "root") {
+        return true;
+      }
+
+      if (node.layer === "evidence") {
+        const startYear = getNodeStartYear(node);
+        return startYear === null || startYear <= timelineState.current;
+      }
+
+      return connectedChildren(node.id).some((child) => nodeMatchesTimeline(child));
+    }
+
+    function nodeVisible(node) {
+      return nodeMatchesFilter(node) && nodeMatchesTimeline(node);
+    }
+
+    function fallbackSelection() {
+      if (activeFilter !== "all") {
+        const domainNode = nodeMap.get(activeFilter);
+        if (domainNode && nodeVisible(domainNode)) {
+          return domainNode;
+        }
+      }
+      return nodeMap.get("root");
+    }
+
+    function ensureSelectionVisible() {
+      if (!nodeVisible(selectedNode)) {
+        selectedNode = fallbackSelection();
+      }
+    }
+
+    function updateTimelineUI() {
+      timelineYear.textContent = String(timelineState.current);
+      timelineCopy.textContent = `Evidence accumulated through ${timelineState.current}`;
+    }
+
+    function nodeMatchesTimeline(node) {
+      if (node.layer === "root") {
+        return true;
+      }
+
+      if (node.layer === "evidence") {
+        const startYear = getNodeStartYear(node);
+        return startYear === null || startYear <= timelineState.current;
+      }
+
+      return connectedChildren(node.id).some((child) => nodeMatchesTimeline(child));
+    }
+
+    function nodeVisible(node) {
+      return nodeMatchesFilter(node) && nodeMatchesTimeline(node);
+    }
+
+    function fallbackSelection() {
+      if (activeFilter !== "all") {
+        const domainNode = nodeMap.get(activeFilter);
+        if (domainNode && nodeVisible(domainNode)) {
+          return domainNode;
+        }
+      }
+      return nodeMap.get("root");
+    }
+
+    function ensureSelectionVisible() {
+      if (!nodeVisible(selectedNode)) {
+        selectedNode = fallbackSelection();
+      }
+    }
+
+    function updateTimelineUI() {
+      timelineYear.textContent = String(timelineState.current);
+      timelineCopy.textContent = `Evidence accumulated through ${timelineState.current}`;
+    }
+
+    function nodeMatchesTimeline(node) {
+      if (node.layer === "root") {
+        return true;
+      }
+
+      if (node.layer === "evidence") {
+        const startYear = getNodeStartYear(node);
+        return startYear === null || startYear <= timelineState.current;
+      }
+
+      return connectedChildren(node.id).some((child) => nodeMatchesTimeline(child));
+    }
+
+    function nodeVisible(node) {
+      return nodeMatchesFilter(node) && nodeMatchesTimeline(node);
+    }
+
+    function fallbackSelection() {
+      if (activeFilter !== "all") {
+        const domainNode = nodeMap.get(activeFilter);
+        if (domainNode && nodeVisible(domainNode)) {
+          return domainNode;
+        }
+      }
+      return nodeMap.get("root");
+    }
+
+    function ensureSelectionVisible() {
+      if (!nodeVisible(selectedNode)) {
+        selectedNode = fallbackSelection();
+      }
+    }
+
+    function updateTimelineUI() {
+      timelineYear.textContent = String(timelineState.current);
+      timelineCopy.textContent = `Evidence accumulated through ${timelineState.current}`;
+    }
+
+    function renderFilters() {
+      const chips = [
+        { id: "all", label: "Show all domains", color: "#172126" },
+        ...Object.entries(domainMeta).map(([id, meta]) => ({ id, label: meta.label, color: meta.color }))
+      ];
+
+      filterBar.innerHTML = chips
+        .map((chip) => {
+          const active = chip.id === activeFilter ? "active" : "";
+          const style = chip.id === activeFilter ? `style="background:${chip.color};"` : "";
+          return `<button class="filter-chip ${active}" data-filter="${chip.id}" ${style}>${chip.label}</button>`;
+        })
+        .join("");
+
+      filterBar.querySelectorAll("[data-filter]").forEach((button) => {
+        button.addEventListener("click", () => {
+          activeFilter = button.dataset.filter;
+          if (activeFilter !== "all" && selectedNode.domain !== activeFilter && selectedNode.layer !== "root") {
+            const domainNode = nodeMap.get(activeFilter);
+            if (domainNode) {
+              selectedNode = domainNode;
+            }
+          }
+          if (activeFilter === "all" && selectedNode.layer === "domain") {
+            selectedNode = nodeMap.get("root");
+          }
+          ensureSelectionVisible();
+          renderFilters();
+          refreshVisibility();
+          renderDetail(selectedNode);
+        });
+      });
+    }
+
+    function renderToolList(tools) {
+      if (!tools || !tools.length) {
+        return "<p class=\"detail-copy\">No specific tools recorded for this node.</p>";
+      }
+
+      return `<ul class="tool-list">${tools.map((tool) => `<li class="pill">${tool}</li>`).join("")}</ul>`;
+    }
+
+    function renderDetail(node) {
+      const metaPills = [];
+      if (node.layer !== "root" && node.layer !== "domain" && domainMeta[node.domain]) {
+        metaPills.push(`<span class="pill" style="border-color:${domainMeta[node.domain].color}40;color:${domainMeta[node.domain].color};">${domainMeta[node.domain].label}</span>`);
+      }
+      if (node.role) {
+        metaPills.push(`<span class="pill">${node.role}</span>`);
+      }
+      if (node.years) {
+        metaPills.push(`<span class="pill">${node.years}</span>`);
+      }
+
+      const layerLabel = node.layer === "root"
+        ? "Career lens"
+        : node.layer === "domain"
+          ? "Strategic domain"
+          : node.layer === "capability"
+            ? "Capability layer"
+            : "Evidence node";
+
+      let body = `
+        <p class="eyebrow">${layerLabel}</p>
+        <h2>${node.label}</h2>
+        <div class="meta-line">${metaPills.join("")}</div>
+        <p class="detail-copy">${node.summary}</p>
+      `;
+
+      if (node.impact) {
+        body += `
+          <div class="detail-section">
+            <h3>Why it matters</h3>
+            <p class="detail-copy">${node.impact}</p>
+          </div>
+        `;
+      }
+
+      if (node.layer === "root") {
+        const domainList = Object.values(domainMeta)
+          .map((meta) => `<li><strong>${meta.label}</strong><br>${meta.summary}</li>`)
+          .join("");
+
+        body += `
+          <div class="detail-section">
+            <h3>Strategic domains</h3>
+            <ul class="detail-list">${domainList}</ul>
+          </div>
+          <div class="detail-section">
+            <h3>Core stack</h3>
+            ${renderToolList(node.tools)}
+          </div>
+        `;
+      }
+
+      if (node.layer === "domain") {
+        const capabilities = connectedChildren(node.id)
+          .map((capability) => `<li><strong>${capability.label}</strong><br>${capability.summary}</li>`)
+          .join("");
+
+        body += `
+          <div class="detail-section">
+            <h3>Capabilities in this domain</h3>
+            <ul class="detail-list">${capabilities}</ul>
+          </div>
+        `;
+      }
+
+      if (node.layer === "capability") {
+        const evidence = connectedChildren(node.id)
+          .map((item) => `<li><strong>${item.label}</strong><br>${item.role} | ${item.years}<br>${item.summary}</li>`)
+          .join("");
+
+        body += `
+          <div class="detail-section">
+            <h3>Evidence attached to this capability</h3>
+            <ul class="detail-list">${evidence}</ul>
+          </div>
+        `;
+      }
+
+      if (node.layer === "evidence") {
+        body += `
+          <div class="detail-section">
+            <h3>Tools and methods</h3>
+            ${renderToolList(node.tools)}
+          </div>
+        `;
+      }
+
+      detailPanel.innerHTML = body;
+    }
+
+    renderFilters();
+    updateTimelineUI();
+    renderDetail(selectedNode);
+
+    const layerMeta = {
+      root: { radius: 22, ring: 0, fontSize: 15 },
+      domain: { radius: 18, ring: 165, fontSize: 12.5 },
+      capability: { radius: 12, ring: 315, fontSize: 11.5 },
+      evidence: { radius: 8, ring: 455, fontSize: 10.5 }
+    };
+
+    const nodeMap = new Map(portfolio.nodes.map((node) => [node.id, node]));
+    let activeFilter = "all";
+    let selectedNode = nodeMap.get("root");
+
+    const stats = [
+      { value: "15+", label: "Years across data, analytics, and systems" },
+      { value: "6", label: "Strategic domains carried across the career" },
+      { value: "18", label: "Repeatable capability layers in the model" },
+      { value: "33", label: "Evidence nodes in the portfolio" }
+    ];
+
+    document.getElementById("stat-grid").innerHTML = stats
+      .map((item) => `<div class="stat-card"><span class="stat-value">${item.value}</span><span class="stat-label">${item.label}</span></div>`)
+      .join("");
+
+    const filterBar = document.getElementById("filter-bar");
+    const tooltip = document.getElementById("tooltip");
+    const detailPanel = document.getElementById("detail-panel");
+    const timelineSlider = document.getElementById("timeline-slider");
+    const timelineYear = document.getElementById("timeline-year");
+    const timelineCopy = document.getElementById("timeline-copy");
+    const timelineMin = document.getElementById("timeline-min");
+    const timelineMax = document.getElementById("timeline-max");
+
+    function getNodeStartYear(node) {
+      if (typeof node.yearStart === "number") {
+        return node.yearStart;
+      }
+      if (node.years) {
+        const match = node.years.match(/\b(19|20)\d{2}\b/);
+        if (match) {
+          return Number(match[0]);
+        }
+      }
+      return null;
+    }
+
+    const evidenceYears = portfolio.nodes
+      .filter((node) => node.layer === "evidence")
+      .map((node) => getNodeStartYear(node))
+      .filter((year) => typeof year === "number");
+
+    const timelineState = {
+      min: Math.min(...evidenceYears),
+      max: Math.max(...evidenceYears),
+      current: Math.max(...evidenceYears)
+    };
+
+    timelineSlider.min = timelineState.min;
+    timelineSlider.max = timelineState.max;
+    timelineSlider.value = timelineState.current;
+    timelineMin.textContent = String(timelineState.min);
+    timelineMax.textContent = String(timelineState.max);
+
+    function domainColor(node) {
+      if (!node || node.layer === "root") {
+        return getComputedStyle(document.documentElement).getPropertyValue("--root").trim();
+      }
+      return domainMeta[node.domain].color;
+    }
+
+    function nodeMatchesFilter(node) {
+      return activeFilter === "all" || node.layer === "root" || node.domain === activeFilter;
+    }
+
+    function getLinkNodeId(linkEnd) {
+      return typeof linkEnd === "object" ? linkEnd.id : linkEnd;
+    }
+
+    function connectedChildren(nodeId) {
+      return portfolio.links
+        .filter((link) => getLinkNodeId(link.source) === nodeId)
+        .map((link) => nodeMap.get(getLinkNodeId(link.target)))
+        .filter(Boolean);
+    }
+
+    function renderFilters() {
+      const chips = [
+        { id: "all", label: "Show all domains", color: "#172126" },
+        ...Object.entries(domainMeta).map(([id, meta]) => ({ id, label: meta.label, color: meta.color }))
+      ];
+
+      filterBar.innerHTML = chips
+        .map((chip) => {
+          const active = chip.id === activeFilter ? "active" : "";
+          const style = chip.id === activeFilter ? `style="background:${chip.color};"` : "";
+          return `<button class="filter-chip ${active}" data-filter="${chip.id}" ${style}>${chip.label}</button>`;
+        })
+        .join("");
+
+      filterBar.querySelectorAll("[data-filter]").forEach((button) => {
+        button.addEventListener("click", () => {
+          activeFilter = button.dataset.filter;
+          if (activeFilter !== "all" && selectedNode.domain !== activeFilter && selectedNode.layer !== "root") {
+            const domainNode = nodeMap.get(activeFilter);
+            if (domainNode) {
+              selectedNode = domainNode;
+            }
+          }
+          if (activeFilter === "all" && selectedNode.layer === "domain") {
+            selectedNode = nodeMap.get("root");
+          }
+          ensureSelectionVisible();
+          renderFilters();
+          refreshVisibility();
+          renderDetail(selectedNode);
+        });
+      });
+    }
+
+    function renderToolList(tools) {
+      if (!tools || !tools.length) {
+        return "<p class=\"detail-copy\">No specific tools recorded for this node.</p>";
+      }
+
+      return `<ul class="tool-list">${tools.map((tool) => `<li class="pill">${tool}</li>`).join("")}</ul>`;
+    }
+
+    function renderDetail(node) {
+      const metaPills = [];
+      if (node.layer !== "root" && node.layer !== "domain" && domainMeta[node.domain]) {
+        metaPills.push(`<span class="pill" style="border-color:${domainMeta[node.domain].color}40;color:${domainMeta[node.domain].color};">${domainMeta[node.domain].label}</span>`);
+      }
+      if (node.role) {
+        metaPills.push(`<span class="pill">${node.role}</span>`);
+      }
+      if (node.years) {
+        metaPills.push(`<span class="pill">${node.years}</span>`);
+      }
+
+      const layerLabel = node.layer === "root"
+        ? "Career lens"
+        : node.layer === "domain"
+          ? "Strategic domain"
+          : node.layer === "capability"
+            ? "Capability layer"
+            : "Evidence node";
+
+      let body = `
+        <p class="eyebrow">${layerLabel}</p>
+        <h2>${node.label}</h2>
+        <div class="meta-line">${metaPills.join("")}</div>
+        <p class="detail-copy">${node.summary}</p>
+      `;
+
+      if (node.impact) {
+        body += `
+          <div class="detail-section">
+            <h3>Why it matters</h3>
+            <p class="detail-copy">${node.impact}</p>
+          </div>
+        `;
+      }
+
+      if (node.layer === "root") {
+        const domainList = Object.values(domainMeta)
+          .map((meta) => `<li><strong>${meta.label}</strong><br>${meta.summary}</li>`)
+          .join("");
+
+        body += `
+          <div class="detail-section">
+            <h3>Strategic domains</h3>
+            <ul class="detail-list">${domainList}</ul>
+          </div>
+          <div class="detail-section">
+            <h3>Core stack</h3>
+            ${renderToolList(node.tools)}
+          </div>
+        `;
+      }
+
+      if (node.layer === "domain") {
+        const capabilities = connectedChildren(node.id)
+          .map((capability) => `<li><strong>${capability.label}</strong><br>${capability.summary}</li>`)
+          .join("");
+
+        body += `
+          <div class="detail-section">
+            <h3>Capabilities in this domain</h3>
+            <ul class="detail-list">${capabilities}</ul>
+          </div>
+        `;
+      }
+
+      if (node.layer === "capability") {
+        const evidence = connectedChildren(node.id)
+          .map((item) => `<li><strong>${item.label}</strong><br>${item.role} | ${item.years}<br>${item.summary}</li>`)
+          .join("");
+
+        body += `
+          <div class="detail-section">
+            <h3>Evidence attached to this capability</h3>
+            <ul class="detail-list">${evidence}</ul>
+          </div>
+        `;
+      }
+
+      if (node.layer === "evidence") {
+        body += `
+          <div class="detail-section">
+            <h3>Tools and methods</h3>
+            ${renderToolList(node.tools)}
+          </div>
+        `;
+      }
+
+      detailPanel.innerHTML = body;
+    }
+
+    */
+    const portfolio = {
+      nodes: [
+        {
+          id: "root",
+          label: "Andrei",
+          shortLabel: "Andrei",
+          layer: "root",
+          domain: "root",
+          summary: "Enterprise data systems thinker with 15+ years building trusted platforms, decision systems, governance foundations, engineering controls, and capability uplift.",
+          impact: "The through-line is progression from telecommunications engineering and systems testing into architecture, platform assurance, governance, decision support, and enterprise leadership.",
+          tools: ["R", "Python", "SQL", "Azure Synapse", "Power BI", "Microsoft Purview", "dbt", "Snowflake", "Shiny", "Docker", "Node.js", "Azure REST API", "Jira", "LightGBM", "Git PR workflows"]
+        },
+        {
+          id: "architecture",
+          label: "Enterprise Data Architecture",
+          shortLabel: "Architecture",
+          layer: "domain",
+          domain: "architecture",
+          summary: domainMeta.architecture.summary
+        },
+        {
+          id: "analytics",
+          label: "Decision Intelligence and Analytics",
+          shortLabel: "Analytics",
+          layer: "domain",
+          domain: "analytics",
+          summary: domainMeta.analytics.summary
+        },
+        {
+          id: "governance",
+          label: "Data Governance and Trust Systems",
+          shortLabel: "Governance",
+          layer: "domain",
+          domain: "governance",
+          summary: domainMeta.governance.summary
+        },
+        {
+          id: "platform",
+          label: "Platform Engineering and Enablement",
+          shortLabel: "Platform",
+          layer: "domain",
+          domain: "platform",
+          summary: domainMeta.platform.summary
+        },
+        {
+          id: "leadership",
+          label: "Leadership and Capability Building",
+          shortLabel: "Leadership",
+          layer: "domain",
+          domain: "leadership",
+          summary: domainMeta.leadership.summary
+        },
+        {
+          id: "engineering",
+          label: "Telecommunications and Systems Engineering",
+          shortLabel: "Engineering",
+          layer: "domain",
+          domain: "engineering",
+          summary: domainMeta.engineering.summary
+        },
+        {
+          id: "arch-modelling",
+          label: "Data modelling and semantic design",
+          shortLabel: "Modelling",
+          layer: "capability",
+          domain: "architecture",
+          summary: "Designing reusable structures that support reporting, planning, and longitudinal analysis."
+        },
+        {
+          id: "arch-operating-model",
+          label: "Integration and operating model design",
+          shortLabel: "Operating model",
+          layer: "capability",
+          domain: "architecture",
+          summary: "Connecting business processes, stewardship, reporting, and platform delivery into one system."
+        },
+        {
+          id: "arch-artefacts",
+          label: "Architecture communication and reference models",
+          shortLabel: "Artefacts",
+          layer: "capability",
+          domain: "architecture",
+          summary: "Using maps, diagrams, standards, and reference models to align technical and business stakeholders."
+        },
+        {
+          id: "analytics-forecasting",
+          label: "Forecasting and predictive modelling",
+          shortLabel: "Forecasting",
+          layer: "capability",
+          domain: "analytics",
+          summary: "Applying forecasting and modelling to public health, infrastructure, and network decisions."
+        },
+        {
+          id: "analytics-kpi",
+          label: "KPI systems and executive insight",
+          shortLabel: "KPI systems",
+          layer: "capability",
+          domain: "analytics",
+          summary: "Moving organisations from static reporting toward decision-ready performance systems."
+        },
+        {
+          id: "analytics-data-science",
+          label: "Applied data science",
+          shortLabel: "Data science",
+          layer: "capability",
+          domain: "analytics",
+          summary: "Using modelling, text extraction, and integrated datasets to answer higher-value questions."
+        },
+        {
+          id: "governance-stewardship",
+          label: "Data stewardship and ownership",
+          shortLabel: "Stewardship",
+          layer: "capability",
+          domain: "governance",
+          summary: "Creating ownership models that make governance workable rather than theoretical."
+        },
+        {
+          id: "governance-compliance",
+          label: "Privacy, compliance, and auditability",
+          shortLabel: "Compliance",
+          layer: "capability",
+          domain: "governance",
+          summary: "Embedding controls and traceability into regulated and executive-facing environments."
+        },
+        {
+          id: "governance-trust",
+          label: "Trust and assurance by design",
+          shortLabel: "Assurance",
+          layer: "capability",
+          domain: "governance",
+          summary: "Treating governance as a decision-confidence enabler and a prerequisite for AI readiness."
+        },
+        {
+          id: "platform-azure",
+          label: "Azure data platform design",
+          shortLabel: "Azure platform",
+          layer: "capability",
+          domain: "platform",
+          summary: "Designing and running enterprise data platforms across Synapse and related Microsoft tooling."
+        },
+        {
+          id: "platform-pipelines",
+          label: "Transformation and pipeline engineering",
+          shortLabel: "Pipelines",
+          layer: "capability",
+          domain: "platform",
+          summary: "Automating ingestion, transformation, refresh, and quality through reproducible delivery patterns."
+        },
+        {
+          id: "platform-products",
+          label: "Insight products and self-service enablement",
+          shortLabel: "Insight products",
+          layer: "capability",
+          domain: "platform",
+          summary: "Creating semantic layers and analytical products that scale trusted insight."
+        },
+        {
+          id: "leadership-exec",
+          label: "Executive partnering",
+          shortLabel: "Executive partnering",
+          layer: "capability",
+          domain: "leadership",
+          summary: "Partnering with leaders to translate strategy into measures, platforms, and decision support."
+        },
+        {
+          id: "leadership-team",
+          label: "Team building and coaching",
+          shortLabel: "Team building",
+          layer: "capability",
+          domain: "leadership",
+          summary: "Leading multidisciplinary teams while mentoring analysts and engineers."
+        },
+        {
+          id: "leadership-culture",
+          label: "Capability uplift and culture",
+          shortLabel: "Capability uplift",
+          layer: "capability",
+          domain: "leadership",
+          summary: "Building repeatable practices, communities, and training that lift organisational maturity."
+        },
+        {
+          id: "engineering-rf",
+          label: "RF network planning and optimisation",
+          shortLabel: "RF planning",
+          layer: "capability",
+          domain: "engineering",
+          summary: "Designing coverage, capacity, and optimisation plans across radio access environments."
+        },
+        {
+          id: "engineering-field",
+          label: "Field validation and interference analysis",
+          shortLabel: "Field validation",
+          layer: "capability",
+          domain: "engineering",
+          summary: "Validating design assumptions, measuring propagation, and resolving coexistence and interference issues."
+        },
+        {
+          id: "engineering-testing",
+          label: "Systems testing and technical instrumentation",
+          shortLabel: "Systems testing",
+          layer: "capability",
+          domain: "engineering",
+          summary: "Using instrumentation, calibration, and structured testing to verify quality and technical performance."
+        },
+        {
+          id: "ev-student-lifecycle",
+          label: "Student lifecycle model",
+          shortLabel: "Student lifecycle",
+          layer: "evidence",
+          domain: "architecture",
+          role: "University of the Sunshine Coast",
+          years: "2023 - Present",
+          summary: "Integrated enrolment, progression, retention, and outcomes into reusable institutional analytics.",
+          impact: "Created a stronger architecture base for planning, reporting, and performance conversations.",
+          tools: ["Azure Synapse", "SQL", "Power BI"]
+        },
+        {
+          id: "ev-type2-dw",
+          label: "Type 2 warehouse design",
+          shortLabel: "Type 2 DW",
+          layer: "evidence",
+          domain: "architecture",
+          role: "Spectrum Efficiency",
+          years: "2022 - 2023",
+          summary: "Implemented longitudinal warehouse patterns for multi-agency analysis.",
+          impact: "Made change over time visible across shared datasets used for workforce and education insight.",
+          tools: ["Azure Synapse", "SQL", "R"]
+        },
+        {
+          id: "ev-shared-platform",
+          label: "Shared multi-agency data platform",
+          shortLabel: "Shared platform",
+          layer: "evidence",
+          domain: "architecture",
+          role: "Spectrum Efficiency",
+          years: "2022 - 2023",
+          summary: "Designed an integrated platform supporting workforce planning and vocational education insight.",
+          impact: "Reduced time and cost for analysts accessing trusted cross-agency information.",
+          tools: ["Azure Synapse", "Databricks", "Power BI"]
+        },
+        {
+          id: "ev-capability-maps",
+          label: "Capability maps and governance artefacts",
+          shortLabel: "Capability maps",
+          layer: "evidence",
+          domain: "architecture",
+          role: "University of the Sunshine Coast",
+          years: "2023 - Present",
+          summary: "Produced artefacts that aligned business, privacy, IT, and analytics stakeholders.",
+          impact: "Improved architecture communication and sequencing of delivery decisions.",
+          tools: ["Power BI", "Microsoft 365", "Reference models"]
+        },
+        {
+          id: "ev-herm-compliance",
+          label: "Five-layer compliance monitoring model",
+          shortLabel: "HERM model",
+          layer: "evidence",
+          domain: "architecture",
+          role: "University of the Sunshine Coast",
+          years: "2025 - 2026",
+          summary: "Designed a five-layer HERM-aligned model linking reference architecture, control objectives, standards, implementation templates, and continuous monitoring.",
+          impact: "Provided a reusable architecture pattern for translating policy into auditable Azure controls.",
+          tools: ["HERM-DRM", "CIS", "NIST/ISO", "ARM/Bicep", "Continuous monitoring"],
+          metrics: "5 layers spanning reference model through monitoring.",
+          source: "Internal compliance framework note",
+          confidence: "High"
+        },
+        {
+          id: "ev-immunisation-forecasting",
+          label: "Immunisation forecasting",
+          shortLabel: "Immunisation",
+          layer: "evidence",
+          domain: "analytics",
+          role: "Te Whatu Ora",
+          years: "2023",
+          summary: "Built predictive and time series models supporting national public health priorities.",
+          impact: "Provided decision support for leaders working in a high-accountability health environment.",
+          tools: ["R", "Snowflake", "dbt"]
+        },
+        {
+          id: "ev-kpi-systems",
+          label: "Executive KPI systems",
+          shortLabel: "KPI systems",
+          layer: "evidence",
+          domain: "analytics",
+          role: "University of the Sunshine Coast",
+          years: "2023 - Present",
+          summary: "Established trusted planning and performance reporting for executive decision-making.",
+          impact: "Shifted emphasis from static reporting toward insight-led conversations and clearer accountability.",
+          tools: ["Power BI", "Azure Synapse", "SQL"]
+        },
+        {
+          id: "ev-idi-nlp",
+          label: "IDI and NLP models",
+          shortLabel: "IDI and NLP",
+          layer: "evidence",
+          domain: "analytics",
+          role: "Ministry of Education",
+          years: "2020 - 2022",
+          summary: "Used predictive modelling and text extraction to support planning, policy, and infrastructure analysis.",
+          impact: "Expanded the use of data science beyond reporting into deeper insight generation.",
+          tools: ["R", "Python", "SQL"]
+        },
+        {
+          id: "ev-eftsl-roi",
+          label: "EFTSL forecasting pipeline ROI",
+          shortLabel: "EFTSL ROI",
+          layer: "evidence",
+          domain: "analytics",
+          role: "University of the Sunshine Coast",
+          years: "2025 - 2026",
+          summary: "Quantified the EFTSL forecasting pipeline's accuracy, time savings, annual value, development effort, and modelling footprint.",
+          impact: "Created a defensible value case for the forecasting work and made model performance easier to communicate.",
+          tools: ["Time-series forecasting", "Feature engineering", "Validation", "Reporting", "Power BI compatibility"],
+          metrics: "99.55% accuracy; 400+ hours saved annually; $80k+ estimated annual value; 184 development hours.",
+          source: "Internal forecasting value summary",
+          confidence: "Medium"
+        },
+        {
+          id: "ev-lightgbm-validation",
+          label: "Forecast model validation",
+          shortLabel: "LightGBM",
+          layer: "evidence",
+          domain: "analytics",
+          role: "University of the Sunshine Coast",
+          years: "2025 - 2026",
+          summary: "Tested eight forecasting approaches and selected LightGBM as the best-performing EFTSL model against actuals.",
+          impact: "Provided a quantified basis for model selection rather than relying on intuition or a single method.",
+          tools: ["ARIMA", "ETS", "Holt-Winters", "Random Forest", "XGBoost", "LightGBM", "Ensembles"],
+          metrics: "8 models tested; 0.45% MAPE; forecast 15,490 vs actual 15,420.",
+          source: "Forecast model validation note",
+          confidence: "Medium"
+        },
+        {
+          id: "ev-purview-stewardship",
+          label: "Purview and stewardship model",
+          shortLabel: "Purview",
+          layer: "evidence",
+          domain: "governance",
+          role: "University of the Sunshine Coast",
+          years: "2023 - Present",
+          summary: "Implemented Microsoft Purview and co-defined stewardship domains with business, privacy, and IT stakeholders.",
+          impact: "Made governance operational and visible rather than a policy-only exercise.",
+          tools: ["Microsoft Purview", "Data classification", "Stewardship"]
+        },
+        {
+          id: "ev-sensitive-controls",
+          label: "Sensitive data controls for executive assets",
+          shortLabel: "Sensitive controls",
+          layer: "evidence",
+          domain: "governance",
+          role: "University of the Sunshine Coast",
+          years: "2023 - Present",
+          summary: "Introduced governance controls and assurance processes for sensitive and executive-facing information assets.",
+          impact: "Strengthened trust in planning and reporting outputs used by senior leaders.",
+          tools: ["Governance controls", "Privacy alignment", "Assurance"]
+        },
+        {
+          id: "ev-audit-automation",
+          label: "Regulatory audit automation",
+          shortLabel: "Audit automation",
+          layer: "evidence",
+          domain: "governance",
+          role: "MBIE, Radio Spectrum Management",
+          years: "2017 - 2019",
+          summary: "Built automated compliance and audit workflows in a regulated licensing environment.",
+          impact: "Improved repeatability, traceability, and reporting confidence for compliance work.",
+          tools: ["R", "SQL", "Audit workflows"]
+        },
+        {
+          id: "ev-dwbi-process-audit",
+          label: "DWBI process assurance audit",
+          shortLabel: "Process audit",
+          layer: "evidence",
+          domain: "governance",
+          role: "University of the Sunshine Coast",
+          years: "2025 - 2026",
+          summary: "Audited the DWBI development process, documented missing peer review and code review controls, and defined remediation needs.",
+          impact: "Created a concrete assurance path for improving engineering discipline and delivery controls.",
+          tools: ["Process audit", "Confluence", "Checklist design"],
+          metrics: "Missing peer review page, developer handbook, and code review standard identified.",
+          source: "DWBI-DEVELOPMENT-PROCESS-AUDIT.md",
+          confidence: "High"
+        },
+        {
+          id: "ev-v4-findings",
+          label: "V4 platform security assurance",
+          shortLabel: "V4 audit",
+          layer: "evidence",
+          domain: "governance",
+          role: "University of the Sunshine Coast",
+          years: "2025 - 2026",
+          summary: "Audited the V4 data platform, recorded control status by severity, and escalated concrete fail findings including overprivileged RBAC and missing diagnostics.",
+          impact: "Created an action-oriented security baseline for platform remediation.",
+          tools: ["Azure security audit reporting", "Control review", "Escalation register"],
+          metrics: "167 resources audited; 126 PASS, 14 WARN, 14 FAIL, 13 MANUAL.",
+          source: "V4-CYBER-AUDIT-FINDINGS.md",
+          confidence: "High"
+        },
+        {
+          id: "ev-security-hardening",
+          label: "Security hardening governance",
+          shortLabel: "Hardening",
+          layer: "evidence",
+          domain: "governance",
+          role: "University of the Sunshine Coast",
+          years: "2025 - 2026",
+          summary: "Completed the V4 technical hardening assessment and tracked the remaining operational work into BAU follow-ups.",
+          impact: "Reduced the recorded cyber risk position and formalised follow-through on remaining controls.",
+          tools: ["Jira", "Mitigation review", "BAU decomposition"],
+          metrics: "Cyber risk reduced from HIGH to MEDIUM; follow-up tracked under DWBIP-1681 to DWBIP-1690.",
+          source: "JIRA-RETURN-PERIOD-EVIDENCE.md",
+          confidence: "High"
+        },
+        {
+          id: "ev-teqsa-evidence",
+          label: "TEQSA reporting evidence model",
+          shortLabel: "TEQSA",
+          layer: "evidence",
+          domain: "governance",
+          role: "University of the Sunshine Coast",
+          years: "2025 - 2026",
+          summary: "Mapped Data Portal reporting to HESF / TEQSA evidence requirements and linked metadata quality to re-registration readiness.",
+          impact: "Turned reporting artefacts into part of the formal evidence base rather than a separate reporting stream.",
+          tools: ["HESF Mapping Table", "Power BI compliance flagging", "Metadata governance"],
+          metrics: "~50 reports mapped to HESF 2021 Level 3 standards.",
+          source: "JIRA-RETURN-PERIOD-EVIDENCE.md",
+          confidence: "High"
+        },
+        {
+          id: "ev-synapse-foundation",
+          label: "Synapse enterprise warehouse foundation",
+          shortLabel: "Synapse",
+          layer: "evidence",
+          domain: "platform",
+          role: "University of the Sunshine Coast",
+          years: "2023 - Present",
+          summary: "Directed Azure Synapse as the enterprise data warehousing foundation.",
+          impact: "Created a scalable base for governed analytics and semantic delivery.",
+          tools: ["Azure Synapse", "SQL", "ETL orchestration"]
+        },
+        {
+          id: "ev-dbt-snowflake",
+          label: "dbt and Snowflake transformation pipelines",
+          shortLabel: "dbt + Snowflake",
+          layer: "evidence",
+          domain: "platform",
+          role: "Te Whatu Ora",
+          years: "2023",
+          summary: "Strengthened modular transformation and reusable analytical delivery in a national health setting.",
+          impact: "Improved analytical consistency and platform reusability.",
+          tools: ["dbt", "Snowflake", "R"]
+        },
+        {
+          id: "ev-powerbi-semantic",
+          label: "Power BI semantic models",
+          shortLabel: "Semantic layer",
+          layer: "evidence",
+          domain: "platform",
+          role: "University of the Sunshine Coast",
+          years: "2023 - Present",
+          summary: "Enabled governed self-service reporting through reusable semantic models and trusted metrics.",
+          impact: "Reduced duplication while improving access to executive-ready insight.",
+          tools: ["Power BI", "Semantic models", "Governed metrics"]
+        },
+        {
+          id: "ev-shiny-docker",
+          label: "Shiny and Docker analytics apps",
+          shortLabel: "Shiny apps",
+          layer: "evidence",
+          domain: "platform",
+          role: "Te Whatu Ora",
+          years: "2023",
+          summary: "Developed modular analytical products for insight delivery and reuse.",
+          impact: "Turned analytical work into more durable products rather than one-off outputs.",
+          tools: ["R Shiny", "Docker", "Snowflake"]
+        },
+        {
+          id: "ev-bi-standards",
+          label: "BI engineering delivery standards",
+          shortLabel: "Standards",
+          layer: "evidence",
+          domain: "platform",
+          role: "University of the Sunshine Coast",
+          years: "2025 - 2026",
+          summary: "Authored BI developer standards requiring technical review before build, peer approval before UAT, and pull requests for main-branch changes.",
+          impact: "Established repeatable engineering controls and clearer BAU handover expectations for delivery.",
+          tools: ["Jira", "Pull requests", "Technical review", "Peer review", "BAU checklist"],
+          metrics: "2-business-day review window; 1 peer approval required.",
+          source: "BI-DEVELOPER-STANDARDS-DRAFT.md",
+          confidence: "High"
+        },
+        {
+          id: "ev-azure-audit-tool",
+          label: "Azure cyber audit automation",
+          shortLabel: "Cyber audit",
+          layer: "evidence",
+          domain: "platform",
+          role: "University of the Sunshine Coast",
+          years: "2025 - 2026",
+          summary: "Built an automated Azure V4 cyber audit tool that authenticates with Azure CLI, calls ARM APIs, and outputs Markdown plus JSON evidence.",
+          impact: "Replaced manual portal checking with repeatable, evidence-backed audit generation.",
+          tools: ["Azure CLI", "Azure ARM REST API", "Markdown", "JSON"],
+          metrics: "Synapse, ADF, 4 storage accounts, 15 private endpoints, 7 control categories, ~2-minute runtime.",
+          source: "Internal compliance automation note",
+          confidence: "High"
+        },
+        {
+          id: "ev-exec-advisory",
+          label: "Executive advisory on planning and metrics",
+          shortLabel: "Executive advisory",
+          layer: "evidence",
+          domain: "leadership",
+          role: "University of the Sunshine Coast",
+          years: "2023 - Present",
+          summary: "Partnered with senior leaders to translate strategy into reporting priorities, trusted measures, and governance decisions.",
+          impact: "Positioned the function as decision support, not just reporting delivery.",
+          tools: ["Executive engagement", "Planning frameworks", "Metrics design"]
+        },
+        {
+          id: "ev-team-leadership",
+          label: "Multidisciplinary BI and DW team leadership",
+          shortLabel: "Team leadership",
+          layer: "evidence",
+          domain: "leadership",
+          role: "University of the Sunshine Coast",
+          years: "2023 - Present",
+          summary: "Led engineering, analytics, and visualisation capability across delivery and governance forums.",
+          impact: "Created a stronger bridge between technical execution and institutional priorities.",
+          tools: ["Leadership", "Coaching", "Delivery management"]
+        },
+        {
+          id: "ev-community-practice",
+          label: "Data community of practice",
+          shortLabel: "Community of practice",
+          layer: "evidence",
+          domain: "leadership",
+          role: "Spectrum Efficiency",
+          years: "2022 - 2023",
+          summary: "Established a practice for standards, reuse, and data literacy across analysts.",
+          impact: "Lifted consistency and strengthened adoption of shared methods.",
+          tools: ["Training", "Standards", "Data literacy"]
+        },
+        {
+          id: "ev-training",
+          label: "Reproducible analytics training",
+          shortLabel: "Training",
+          layer: "evidence",
+          domain: "leadership",
+          role: "Ministry of Education",
+          years: "2020",
+          summary: "Introduced data science training, version control, and testing practices for analysts.",
+          impact: "Improved internal capability and the reliability of analytical outputs.",
+          tools: ["Version control", "Testing", "Data science training"]
+        },
+        {
+          id: "ev-roadmap-prioritisation",
+          label: "Stakeholder prioritisation and roadmap translation",
+          shortLabel: "Roadmap",
+          layer: "evidence",
+          domain: "leadership",
+          role: "University of the Sunshine Coast",
+          years: "2026",
+          summary: "Led survey data prioritisation with stakeholders and converted the agreed order into roadmap and Jira actions.",
+          impact: "Turned stakeholder discussion into a sequenced delivery plan with accountable follow-up.",
+          tools: ["Stakeholder facilitation", "Roadmap management", "Jira action tracking"],
+          metrics: "7 survey and reporting streams prioritised.",
+          source: "survey-data-integration-meeting-notes-2026.md",
+          confidence: "High"
+        },
+        {
+          id: "ev-pdp-reviews",
+          label: "Team performance management",
+          shortLabel: "PDP reviews",
+          layer: "evidence",
+          domain: "leadership",
+          role: "University of the Sunshine Coast",
+          years: "2026",
+          summary: "Ran 2026 PDP progress reviews across the BI team with due dates, named staff, and management-line escalation where needed.",
+          impact: "Formalised performance follow-up and made goal tracking visible across the team.",
+          tools: ["Jira PDP tickets", "Review workflow", "Management escalation"],
+          metrics: "4 team members named in the review cycle.",
+          source: "JIRA-RETURN-PERIOD-EVIDENCE.md",
+          confidence: "High"
+        },
+        {
+          id: "ev-engineer-uplift",
+          label: "Engineering capability uplift",
+          shortLabel: "Capability uplift",
+          layer: "evidence",
+          domain: "leadership",
+          role: "University of the Sunshine Coast",
+          years: "2026",
+          summary: "Set concrete uplift goals for a senior data engineer around observability, schema governance, drift detection, and design review.",
+          impact: "Built reusable engineering capability rather than limiting leadership to task allocation.",
+          tools: ["PDP coaching", "Structured logging", "Schema contracts", "Drift alerts", "Design review"],
+          metrics: "Q2/Q3 2026 milestones across GOS, Canvas, and survey work.",
+          source: "Engineering uplift planning note",
+          confidence: "High"
+        },
+        {
+          id: "ev-alcatel-rf",
+          label: "RF optimisation and coverage planning",
+          shortLabel: "Alcatel RF",
+          layer: "evidence",
+          domain: "engineering",
+          role: "Alcatel-Lucent",
+          years: "Early career",
+          yearStart: 2010,
+          summary: "Performed site surveys, validated link budget and coverage assumptions, and prepared optimisation plans for service launch footprints.",
+          impact: "Built the systems and measurement discipline that later translated naturally into data architecture and platform design.",
+          tools: ["JDSU", "Nemo", "R&S", "Atoll", "Coverage planning"]
+        },
+        {
+          id: "ev-alcatel-interference",
+          label: "Propagation calibration and interference analysis",
+          shortLabel: "Interference",
+          layer: "evidence",
+          domain: "engineering",
+          role: "Alcatel-Lucent",
+          years: "Early career",
+          yearStart: 2010,
+          summary: "Used scanner drives, propagation measurements, neighbour review, and spectrum analysis to calibrate models and resolve coexistence issues.",
+          impact: "Strengthened the habit of validating assumptions with field evidence rather than relying on design intent alone.",
+          tools: ["Spectrum analyser", "CW measurements", "Neighbour lists", "Propagation modelling"]
+        },
+        {
+          id: "ev-continental-testing",
+          label: "Safety systems test and calibration work",
+          shortLabel: "Continental",
+          layer: "evidence",
+          domain: "engineering",
+          role: "Continental",
+          years: "2009 - 2010",
+          summary: "Performed safety system and pre-release tests on ABS systems while calibrating measurement devices and understanding PCB layout and functionality.",
+          impact: "Added a strong quality-assurance and instrumentation base to the broader engineering toolkit.",
+          tools: ["ABS testing", "9100 Universal Calibration System", "PCB analysis"]
+        },
+        {
+          id: "ev-raal-technician",
+          label: "Telecommunications technician foundations",
+          shortLabel: "Raal",
+          layer: "evidence",
+          domain: "engineering",
+          role: "Raal",
+          years: "2005",
+          summary: "Prepared data sheets, catalogued telecommunications equipment, maintained switching-style machinery, and supported repair work.",
+          impact: "Established an early grounding in technical systems, equipment discipline, and hands-on operational work.",
+          tools: ["Data sheets", "Equipment cataloguing", "Technical maintenance"]
+        }
+      ],
+      links: [
+        { source: "root", target: "architecture" },
+        { source: "root", target: "analytics" },
+        { source: "root", target: "governance" },
+        { source: "root", target: "platform" },
+        { source: "root", target: "leadership" },
+        { source: "root", target: "engineering" },
+        { source: "architecture", target: "arch-modelling" },
+        { source: "architecture", target: "arch-operating-model" },
+        { source: "architecture", target: "arch-artefacts" },
+        { source: "analytics", target: "analytics-forecasting" },
+        { source: "analytics", target: "analytics-kpi" },
+        { source: "analytics", target: "analytics-data-science" },
+        { source: "governance", target: "governance-stewardship" },
+        { source: "governance", target: "governance-compliance" },
+        { source: "governance", target: "governance-trust" },
+        { source: "platform", target: "platform-azure" },
+        { source: "platform", target: "platform-pipelines" },
+        { source: "platform", target: "platform-products" },
+        { source: "leadership", target: "leadership-exec" },
+        { source: "leadership", target: "leadership-team" },
+        { source: "leadership", target: "leadership-culture" },
+        { source: "engineering", target: "engineering-rf" },
+        { source: "engineering", target: "engineering-field" },
+        { source: "engineering", target: "engineering-testing" },
+        { source: "arch-modelling", target: "ev-student-lifecycle" },
+        { source: "arch-modelling", target: "ev-type2-dw" },
+        { source: "arch-operating-model", target: "ev-shared-platform" },
+        { source: "arch-artefacts", target: "ev-capability-maps" },
+        { source: "arch-artefacts", target: "ev-herm-compliance" },
+        { source: "analytics-forecasting", target: "ev-immunisation-forecasting" },
+        { source: "analytics-forecasting", target: "ev-eftsl-roi" },
+        { source: "analytics-forecasting", target: "ev-lightgbm-validation" },
+        { source: "analytics-kpi", target: "ev-kpi-systems" },
+        { source: "analytics-data-science", target: "ev-idi-nlp" },
+        { source: "governance-stewardship", target: "ev-purview-stewardship" },
+        { source: "governance-compliance", target: "ev-sensitive-controls" },
+        { source: "governance-compliance", target: "ev-dwbi-process-audit" },
+        { source: "governance-compliance", target: "ev-teqsa-evidence" },
+        { source: "governance-trust", target: "ev-audit-automation" },
+        { source: "governance-trust", target: "ev-v4-findings" },
+        { source: "governance-trust", target: "ev-security-hardening" },
+        { source: "platform-azure", target: "ev-synapse-foundation" },
+        { source: "platform-azure", target: "ev-azure-audit-tool" },
+        { source: "platform-pipelines", target: "ev-dbt-snowflake" },
+        { source: "platform-pipelines", target: "ev-bi-standards" },
+        { source: "platform-products", target: "ev-powerbi-semantic" },
+        { source: "platform-products", target: "ev-shiny-docker" },
+        { source: "leadership-exec", target: "ev-exec-advisory" },
+        { source: "leadership-exec", target: "ev-roadmap-prioritisation" },
+        { source: "leadership-team", target: "ev-team-leadership" },
+        { source: "leadership-team", target: "ev-pdp-reviews" },
+        { source: "leadership-culture", target: "ev-community-practice" },
+        { source: "leadership-culture", target: "ev-training" },
+        { source: "leadership-culture", target: "ev-engineer-uplift" },
+        { source: "engineering-rf", target: "ev-alcatel-rf" },
+        { source: "engineering-field", target: "ev-alcatel-interference" },
+        { source: "engineering-testing", target: "ev-continental-testing" },
+        { source: "engineering-testing", target: "ev-raal-technician" }
+      ]
+    };
+
+    const layerMeta = {
+      root: { radius: 22, ring: 0, fontSize: 15 },
+      domain: { radius: 18, ring: 165, fontSize: 12.5 },
+      capability: { radius: 12, ring: 315, fontSize: 11.5 },
+      evidence: { radius: 8, ring: 455, fontSize: 10.5 }
+    };
+
+    const nodeMap = new Map(portfolio.nodes.map((node) => [node.id, node]));
+    let activeFilter = "all";
+    let selectedNode = nodeMap.get("root");
+
+    const stats = [
+      { value: "15+", label: "Years across data, analytics, and systems" },
+      { value: "6", label: "Strategic domains carried across the career" },
+      { value: "18", label: "Repeatable capability layers in the model" },
+      { value: "33", label: "Evidence nodes in the portfolio" }
+    ];
+
+    document.getElementById("stat-grid").innerHTML = stats
+      .map((item) => `<div class="stat-card"><span class="stat-value">${item.value}</span><span class="stat-label">${item.label}</span></div>`)
+      .join("");
+
+    const filterBar = document.getElementById("filter-bar");
+    const tooltip = document.getElementById("tooltip");
+    const detailPanel = document.getElementById("detail-panel");
+    const timelineSlider = document.getElementById("timeline-slider");
+    const timelineYear = document.getElementById("timeline-year");
+    const timelineCopy = document.getElementById("timeline-copy");
+    const timelineMin = document.getElementById("timeline-min");
+    const timelineMax = document.getElementById("timeline-max");
+
+    function getNodeStartYear(node) {
+      if (typeof node.yearStart === "number") {
+        return node.yearStart;
+      }
+      if (node.years) {
+        const match = node.years.match(/\b(19|20)\d{2}\b/);
+        if (match) {
+          return Number(match[0]);
+        }
+      }
+      return null;
+    }
+
+    const evidenceYears = portfolio.nodes
+      .filter((node) => node.layer === "evidence")
+      .map((node) => getNodeStartYear(node))
+      .filter((year) => typeof year === "number");
+
+    const timelineState = {
+      min: Math.min(...evidenceYears),
+      max: Math.max(...evidenceYears),
+      current: Math.max(...evidenceYears)
+    };
+
+    timelineSlider.min = timelineState.min;
+    timelineSlider.max = timelineState.max;
+    timelineSlider.value = timelineState.current;
+    timelineMin.textContent = String(timelineState.min);
+    timelineMax.textContent = String(timelineState.max);
+
+    function domainColor(node) {
+      if (!node || node.layer === "root") {
+        return getComputedStyle(document.documentElement).getPropertyValue("--root").trim();
+      }
+      return domainMeta[node.domain].color;
+    }
+
+    function nodeMatchesFilter(node) {
+      return activeFilter === "all" || node.layer === "root" || node.domain === activeFilter;
+    }
+
+    function getLinkNodeId(linkEnd) {
+      return typeof linkEnd === "object" ? linkEnd.id : linkEnd;
+    }
+
+    function connectedChildren(nodeId) {
+      return portfolio.links
+        .filter((link) => getLinkNodeId(link.source) === nodeId)
+        .map((link) => nodeMap.get(getLinkNodeId(link.target)))
+        .filter(Boolean);
+    }
+
+    function nodeMatchesTimeline(node) {
+      if (node.layer === "root") {
+        return true;
+      }
+      if (node.layer === "evidence") {
+        const startYear = getNodeStartYear(node);
+        return startYear === null || startYear <= timelineState.current;
+      }
+      return connectedChildren(node.id).some((child) => nodeMatchesTimeline(child));
+    }
+
+    function nodeVisible(node) {
+      return nodeMatchesFilter(node) && nodeMatchesTimeline(node);
+    }
+
+    function fallbackSelection() {
+      if (activeFilter !== "all") {
+        const domainNode = nodeMap.get(activeFilter);
+        if (domainNode && nodeVisible(domainNode)) {
+          return domainNode;
+        }
+      }
+      return nodeMap.get("root");
+    }
+
+    function ensureSelectionVisible() {
+      if (!nodeVisible(selectedNode)) {
+        selectedNode = fallbackSelection();
+      }
+    }
+
+    function updateTimelineUI() {
+      timelineYear.textContent = String(timelineState.current);
+      timelineCopy.textContent = `Evidence accumulated through ${timelineState.current}`;
+    }
+
+    function renderFilters() {
+      const chips = [
+        { id: "all", label: "Show all domains", color: "#172126" },
+        ...Object.entries(domainMeta).map(([id, meta]) => ({ id, label: meta.label, color: meta.color }))
+      ];
+
+      filterBar.innerHTML = chips
+        .map((chip) => {
+          const active = chip.id === activeFilter ? "active" : "";
+          const style = chip.id === activeFilter ? `style="background:${chip.color};"` : "";
+          return `<button class="filter-chip ${active}" data-filter="${chip.id}" ${style}>${chip.label}</button>`;
+        })
+        .join("");
+
+      filterBar.querySelectorAll("[data-filter]").forEach((button) => {
+        button.addEventListener("click", () => {
+          activeFilter = button.dataset.filter;
+          if (activeFilter !== "all" && selectedNode.domain !== activeFilter && selectedNode.layer !== "root") {
+            selectedNode = nodeMap.get(activeFilter);
+          }
+          if (activeFilter === "all" && selectedNode.layer === "domain") {
+            selectedNode = nodeMap.get("root");
+          }
+          ensureSelectionVisible();
+          renderFilters();
+          refreshVisibility();
+          renderDetail(selectedNode);
+        });
+      });
+    }
+
+    timelineSlider.addEventListener("input", () => {
+      timelineState.current = Number(timelineSlider.value);
+      updateTimelineUI();
+      ensureSelectionVisible();
+      refreshVisibility();
+      renderDetail(selectedNode);
+    });
+
+    function renderToolList(tools) {
+      if (!tools || !tools.length) {
+        return "<p class=\"detail-copy\">No specific tools recorded for this node.</p>";
+      }
+      return `<ul class="tool-list">${tools.map((tool) => `<li class="pill">${tool}</li>`).join("")}</ul>`;
+    }
+
+    function renderDetail(node) {
+      const metaPills = [];
+      if (node.layer !== "root" && node.layer !== "domain" && domainMeta[node.domain]) {
+        metaPills.push(`<span class="pill" style="border-color:${domainMeta[node.domain].color}40;color:${domainMeta[node.domain].color};">${domainMeta[node.domain].label}</span>`);
+      }
+      if (node.role) {
+        metaPills.push(`<span class="pill">${node.role}</span>`);
+      }
+      if (node.years) {
+        metaPills.push(`<span class="pill">${node.years}</span>`);
+      }
+
+      const layerLabel = node.layer === "root"
+        ? "Career lens"
+        : node.layer === "domain"
+          ? "Strategic domain"
+          : node.layer === "capability"
+            ? "Capability layer"
+            : "Evidence node";
+
+      let body = `
+        <p class="eyebrow">${layerLabel}</p>
+        <h2>${node.label}</h2>
+        <div class="meta-line">${metaPills.join("")}</div>
+        <p class="detail-copy">${node.summary}</p>
+      `;
+
+      if (node.impact) {
+        body += `<div class="detail-section"><h3>Why it matters</h3><p class="detail-copy">${node.impact}</p></div>`;
+      }
+
+      if (node.metrics) {
+        body += `<div class="detail-section"><h3>Scale or metrics</h3><p class="detail-copy">${node.metrics}</p></div>`;
+      }
+
+      if (node.source || node.confidence) {
+        const evidenceMeta = [];
+        if (node.source) {
+          evidenceMeta.push(`<li><strong>Evidence source</strong><br>Private working evidence retained in the underlying CV register.</li>`);
+        }
+        if (node.confidence) {
+          evidenceMeta.push(`<li><strong>Confidence</strong><br>${node.confidence}</li>`);
+        }
+        body += `<div class="detail-section"><h3>Evidence trace</h3><ul class="detail-list">${evidenceMeta.join("")}</ul></div>`;
+      }
+
+      if (node.layer === "root") {
+        const domainList = Object.values(domainMeta)
+          .map((meta) => `<li><strong>${meta.label}</strong><br>${meta.summary}</li>`)
+          .join("");
+        body += `<div class="detail-section"><h3>Strategic domains</h3><ul class="detail-list">${domainList}</ul></div>`;
+        body += `<div class="detail-section"><h3>Core stack</h3>${renderToolList(node.tools)}</div>`;
+      }
+
+      if (node.layer === "domain") {
+        const capabilities = connectedChildren(node.id)
+          .map((capability) => `<li><strong>${capability.label}</strong><br>${capability.summary}</li>`)
+          .join("");
+        body += `<div class="detail-section"><h3>Capabilities in this domain</h3><ul class="detail-list">${capabilities}</ul></div>`;
+      }
+
+      if (node.layer === "capability") {
+        const evidence = connectedChildren(node.id)
+          .map((item) => `<li><strong>${item.label}</strong><br>${item.role} | ${item.years}<br>${item.summary}</li>`)
+          .join("");
+        body += `<div class="detail-section"><h3>Evidence attached to this capability</h3><ul class="detail-list">${evidence}</ul></div>`;
+      }
+
+      if (node.layer === "evidence") {
+        body += `<div class="detail-section"><h3>Tools and methods</h3>${renderToolList(node.tools)}</div>`;
+      }
+
+      detailPanel.innerHTML = body;
+    }
+
+    renderFilters();
+    updateTimelineUI();
+    renderDetail(selectedNode);
+
+    const graphContainer = document.getElementById("graph");
+    const svg = d3.select("#graph").append("svg");
+    const linkLayer = svg.append("g");
+    const nodeLayer = svg.append("g");
+
+    const links = linkLayer
+      .selectAll("line")
+      .data(portfolio.links)
+      .join("line")
+      .attr("class", "link")
+      .attr("stroke", (d) => domainColor(nodeMap.get(d.target)));
+
+    const nodes = nodeLayer
+      .selectAll("g")
+      .data(portfolio.nodes)
+      .join("g")
+      .attr("class", "node-group")
+      .on("mouseenter", function(event, d) {
+        tooltip.innerHTML = `
+          <strong>${d.label}</strong>
+          ${d.role ? `${d.role}${d.years ? ` | ${d.years}` : ""}<br>` : ""}
+          ${d.summary}
+        `;
+        tooltip.classList.add("visible");
+        tooltip.setAttribute("aria-hidden", "false");
+        positionTooltip(event);
+      })
+      .on("mousemove", function(event) {
+        positionTooltip(event);
+      })
+      .on("mouseleave", function() {
+        tooltip.classList.remove("visible");
+        tooltip.setAttribute("aria-hidden", "true");
+      })
+      .on("click", function(event, d) {
+        selectedNode = d;
+        if (d.layer !== "root") {
+          activeFilter = d.domain;
+          renderFilters();
+        }
+        refreshVisibility();
+        renderDetail(d);
+      })
+      .call(
+        d3.drag()
+          .on("start", dragStarted)
+          .on("drag", dragged)
+          .on("end", dragEnded)
+      );
+
+    nodes
+      .append("circle")
+      .attr("class", "node-halo")
+      .attr("r", (d) => layerMeta[d.layer].radius + 10)
+      .attr("stroke", (d) => domainColor(d));
+
+    nodes
+      .append("circle")
+      .attr("class", "node-circle")
+      .attr("r", (d) => layerMeta[d.layer].radius)
+      .attr("fill", (d) => domainColor(d));
+
+    nodes
+      .append("text")
+      .attr("class", "node-label")
+      .attr("dy", (d) => -(layerMeta[d.layer].radius + 10))
+      .style("font-size", (d) => `${layerMeta[d.layer].fontSize}px`)
+      .text((d) => d.shortLabel);
+
+    let width = 0;
+    let height = 0;
+
+    const simulation = d3.forceSimulation(portfolio.nodes)
+      .force("link", d3.forceLink(portfolio.links).id((d) => d.id).distance((d) => {
+        const source = typeof d.source === "object" ? d.source : nodeMap.get(d.source);
+        const target = typeof d.target === "object" ? d.target : nodeMap.get(d.target);
+        return Math.max(78, Math.abs(layerMeta[target.layer].ring - layerMeta[source.layer].ring));
+      }).strength(0.95))
+      .force("charge", d3.forceManyBody().strength((d) => (d.layer === "root" ? -1400 : -320)))
+      .force("collision", d3.forceCollide().radius((d) => layerMeta[d.layer].radius + (d.layer === "evidence" ? 18 : 28)))
+      .force("radial", d3.forceRadial((d) => layerMeta[d.layer].ring, 0, 0).strength((d) => (d.layer === "root" ? 1 : 0.42)))
+      .force("x", d3.forceX(0).strength(0.05))
+      .force("y", d3.forceY(0).strength(0.05))
+      .alpha(1)
+      .on("tick", ticked);
+
+    function resize() {
+      width = graphContainer.clientWidth;
+      height = Math.max(740, window.innerHeight * 0.78);
+      svg.attr("viewBox", [0, 0, width, height]).attr("width", width).attr("height", height);
+
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const root = nodeMap.get("root");
+      root.fx = centerX;
+      root.fy = centerY;
+
+      simulation.force("radial", d3.forceRadial((d) => layerMeta[d.layer].ring, centerX, centerY).strength((d) => (d.layer === "root" ? 1 : 0.42)));
+      simulation.force("x", d3.forceX(centerX).strength(0.05));
+      simulation.force("y", d3.forceY(centerY).strength(0.05));
+      simulation.alpha(0.85).restart();
+    }
+
+    function ticked() {
+      links
+        .attr("x1", (d) => d.source.x)
+        .attr("y1", (d) => d.source.y)
+        .attr("x2", (d) => d.target.x)
+        .attr("y2", (d) => d.target.y);
+
+      nodes.attr("transform", (d) => `translate(${d.x},${d.y})`);
+    }
+
+    function refreshVisibility() {
+      links
+        .transition()
+        .duration(180)
+        .style("opacity", (d) => {
+          const source = typeof d.source === "object" ? d.source : nodeMap.get(d.source);
+          const target = typeof d.target === "object" ? d.target : nodeMap.get(d.target);
+          return nodeVisible(source) && nodeVisible(target) ? 0.42 : 0.04;
+        });
+
+      nodes
+        .classed("is-selected", (d) => d.id === selectedNode.id)
+        .transition()
+        .duration(180)
+        .style("opacity", (d) => nodeVisible(d) ? 1 : 0.12)
+        .style("pointer-events", (d) => nodeVisible(d) ? "auto" : "none");
+    }
+
+    function positionTooltip(event) {
+      const margin = 18;
+      const tooltipWidth = tooltip.offsetWidth || 260;
+      const top = Math.min(window.innerHeight - tooltip.offsetHeight - margin, event.clientY + margin);
+      const left = Math.min(window.innerWidth - tooltipWidth - margin, event.clientX + margin);
+      tooltip.style.top = `${top}px`;
+      tooltip.style.left = `${left}px`;
+    }
+
+    function dragStarted(event, d) {
+      if (!event.active) {
+        simulation.alphaTarget(0.25).restart();
+      }
+      if (d.layer !== "root") {
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+    }
+
+    function dragged(event, d) {
+      if (d.layer !== "root") {
+        d.fx = event.x;
+        d.fy = event.y;
+      }
+    }
+
+    function dragEnded(event, d) {
+      if (!event.active) {
+        simulation.alphaTarget(0);
+      }
+      if (d.layer !== "root") {
+        d.fx = null;
+        d.fy = null;
+      }
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+    refreshVisibility();
+  </script>
+</body>
+</html>

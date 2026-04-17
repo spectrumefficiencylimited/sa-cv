@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Building The Future | Capability Tree</title>
+  <link rel="stylesheet" href="./building-the-future-tree.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <section class="panel hero">
+      <p class="eyebrow">Capability story</p>
+      <h1>Building the future through a living data tree.</h1>
+      <p class="hero-copy">
+        This page turns your career into a visual metaphor. The roots hold the engineering discipline and regulated-system
+        foundations. The trunk is your current enterprise data leadership. The water represents repeated practice,
+        projects, and learning. The sun represents change, renewal, and the constant cycle of creation and destruction
+        that keeps data work alive. The branches reach toward the future because the story is not just what has been built.
+        It is what you are still building.
+      </p>
+      <div class="hero-metrics">
+        <div class="metric">
+          <strong>18,000</strong>
+          <span>Estimated cumulative learning plus applied practice hours across the capability system.</span>
+        </div>
+        <div class="metric">
+          <strong>6</strong>
+          <span>Capability domains, with engineering shown as the root system feeding the later leadership story.</span>
+        </div>
+        <div class="metric">
+          <strong>15+</strong>
+          <span>Years of evidence spanning telecommunications, government, health, and higher education.</span>
+        </div>
+        <div class="metric">
+          <strong>100h</strong>
+          <span>Waffle chart scale. One filled square equals roughly one hundred hours of real practice and learning.</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="story-layout">
+      <section class="panel scene-panel">
+        <div class="scene-intro">
+          <div>
+            <p class="eyebrow">Visual metaphor</p>
+            <h2>The Tree That Reaches Forward</h2>
+            <p class="scene-note">
+              This is now a real skill-map scene rather than a flat diagram. Click the roots, trunk, river, crown, or sun
+              nodes to inspect the meaning, the evidence, and the estimated hours behind each path. The canopy is where
+              architecture, analytics, governance, platform engineering, and leadership reach upward. The foundation remains
+              visible because the future is strongest when the roots stay honest.
+            </p>
+          </div>
+        </div>
+
+        <div class="scene-wrap">
+          <svg id="capability-tree" viewBox="0 0 1100 760" role="img" aria-labelledby="scene-title scene-desc">
+            <title id="scene-title">Capability tree with roots, water, and sunlight</title>
+            <desc id="scene-desc">A symbolic tree showing engineering roots, an enterprise data leadership trunk, five future-facing branches, nourishing water, and a sun representing renewal and change.</desc>
+            <defs>
+              <linearGradient id="skyGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#f6c66a" />
+                <stop offset="48%" stop-color="#f5ecd0" />
+                <stop offset="100%" stop-color="#dfeee7" />
+              </linearGradient>
+              <linearGradient id="groundGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#7f6a54" />
+                <stop offset="100%" stop-color="#2f271d" />
+              </linearGradient>
+              <linearGradient id="trunkGradient" x1="0%" x2="1%" y1="0%" y2="0%">
+                <stop offset="0%" stop-color="#4c321f" />
+                <stop offset="100%" stop-color="#8b613c" />
+              </linearGradient>
+              <linearGradient id="waterGradient" x1="0%" x2="1%" y1="0%" y2="0%">
+                <stop offset="0%" stop-color="#91dcff" />
+                <stop offset="55%" stop-color="#2ba6df" />
+                <stop offset="100%" stop-color="#146d98" />
+              </linearGradient>
+              <filter id="blurGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="12" />
+              </filter>
+            </defs>
+
+            <rect x="0" y="0" width="1100" height="760" fill="url(#skyGradient)" />
+            <ellipse class="sun-glow" cx="912" cy="118" rx="122" ry="122" fill="rgba(255,214,110,0.42)" filter="url(#blurGlow)" />
+            <g class="sun-rays" opacity="0.9">
+              <line x1="912" y1="12" x2="912" y2="54" />
+              <line x1="912" y1="182" x2="912" y2="224" />
+              <line x1="806" y1="118" x2="848" y2="118" />
+              <line x1="976" y1="118" x2="1018" y2="118" />
+              <line x1="840" y1="46" x2="871" y2="77" />
+              <line x1="953" y1="159" x2="984" y2="190" />
+              <line x1="840" y1="190" x2="871" y2="159" />
+              <line x1="953" y1="77" x2="984" y2="46" />
+            </g>
+            <circle cx="912" cy="118" r="68" fill="#f4b73f" />
+            <circle cx="912" cy="118" r="48" fill="#ffd66e" />
+            <text x="912" y="116" text-anchor="middle" class="scene-tag">Sun</text>
+            <text x="912" y="138" text-anchor="middle" class="scene-subtag">renewal + change</text>
+
+            <path d="M 0 520 C 210 492, 340 514, 460 512 C 620 510, 810 480, 1100 522 L 1100 760 L 0 760 Z" fill="url(#groundGradient)" />
+            <path d="M 1100 516 C 970 512, 830 530, 700 558 C 614 576, 556 606, 518 628 C 470 656, 430 658, 372 656 C 290 652, 210 610, 88 598" fill="none" stroke="url(#waterGradient)" stroke-width="36" stroke-linecap="round" opacity="0.86" />
+            <path class="water-shimmer" d="M 1090 515 C 970 514, 832 529, 702 558 C 614 577, 556 607, 516 628 C 468 656, 430 658, 372 656 C 292 652, 214 612, 98 600" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="6" stroke-linecap="round" />
+            <text x="844" y="565" class="water-label">Water = repeated practice, projects, learning, nourishment</text>
+
+            <g class="oak-canopy" opacity="0.95">
+              <circle cx="324" cy="228" r="84" />
+              <circle cx="410" cy="166" r="92" />
+              <circle cx="540" cy="128" r="98" />
+              <circle cx="674" cy="160" r="94" />
+              <circle cx="778" cy="226" r="90" />
+              <circle cx="610" cy="228" r="84" />
+              <circle cx="468" cy="224" r="86" />
+            </g>
+
+            <path class="oak-trunk" d="M 500 520 C 494 470, 498 422, 512 374 C 522 338, 524 308, 520 286 C 516 264, 520 238, 532 216 L 568 216 C 578 238, 582 264, 580 286 C 576 308, 580 338, 590 374 C 604 424, 608 472, 600 520 Z" />
+            <path class="oak-trunk-shadow" d="M 544 218 C 552 246, 552 280, 548 314 C 544 354, 550 412, 560 520" />
+
+            <path class="oak-branch" d="M 538 228 C 502 204, 454 190, 396 182" />
+            <path class="oak-branch" d="M 532 248 C 484 238, 420 240, 344 254" />
+            <path class="oak-branch" d="M 556 232 C 610 210, 672 196, 742 196" />
+            <path class="oak-branch" d="M 562 252 C 632 254, 706 242, 810 224" />
+            <path class="oak-branch" d="M 548 218 C 548 182, 556 146, 574 108" />
+
+            <path class="root-path" d="M 548 522 C 512 556, 474 594, 422 644" />
+            <path class="root-path" d="M 548 522 C 510 542, 468 560, 404 582" />
+            <path class="root-path" d="M 548 522 C 586 556, 626 594, 680 646" />
+            <path class="root-path" d="M 548 522 C 598 544, 654 562, 738 584" />
+            <path class="root-path root-center" d="M 548 522 C 546 564, 546 614, 550 690" />
+
+            <g id="skill-links"></g>
+            <g id="skill-nodes"></g>
+
+            <text x="86" y="706" class="root-label">Roots = engineering discipline, testing, regulation, field systems</text>
+            <text x="792" y="78" class="sun-copy">The sun powers renewal: old forms break down, new systems are built.</text>
+          </svg>
+        </div>
+
+        <div class="scene-legend">
+          <span class="legend-chip"><span style="background: var(--engineering);"></span>Roots: telecommunications and systems engineering</span>
+          <span class="legend-chip"><span style="background: var(--water);"></span>Water: repeated learning and delivery</span>
+          <span class="legend-chip"><span style="background: var(--sun);"></span>Sun: change, renewal, creation and destruction</span>
+          <span class="legend-chip"><span style="background: var(--platform);"></span>Trunk: current enterprise data leadership</span>
+        </div>
+
+        <div class="tenk-proof">
+          <div class="tenk-copy">
+            <p class="eyebrow">10,000 Hours</p>
+            <h3>Not a myth. A conservative slice of real practice.</h3>
+            <p>
+              This waffle chart is a deliberate proof layer under the tree. It does not try to represent every hour in the
+              career. It shows a defensible first 10,000 hours of repeated exposure across engineering, platform delivery,
+              analytics, governance, leadership, and architecture.
+            </p>
+          </div>
+          <div class="tenk-chart-block">
+            <div id="tenk-waffle" class="tenk-waffle"></div>
+            <div id="tenk-legend" class="tenk-legend"></div>
+            <p class="tenk-note">One square equals 100 hours. The mix is intentionally conservative and traceable back to real work contexts.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel detail-panel" id="detail-panel"></aside>
+    </div>
+
+    <section class="panel waffle-panel">
+      <p class="eyebrow">Practice hours</p>
+      <h2>Waffle charts for cumulative learning and applied delivery</h2>
+      <p class="waffle-copy">
+        These are directional estimates, not payroll timesheets. The point is to make your capability story feel physical
+        and measurable: how much time went into learning, repeating, refining, and carrying each domain across real work.
+        The large waffle chart shows the whole system. The smaller cards break the total into the roots and branches of the tree.
+      </p>
+
+      <div class="overview-grid">
+        <div class="waffle-card">
+          <h3>Total capability system</h3>
+          <p class="waffle-meta">18,000 estimated hours across engineering roots, modern data platforms, governance, analytics, architecture, and leadership.</p>
+          <div class="big-waffle" id="big-waffle"></div>
+          <div class="overview-legend" id="overview-legend"></div>
+        </div>
+
+        <div class="waffle-card">
+          <h3>How to read this</h3>
+          <p class="waffle-meta">
+            Each square in the charts below represents about <strong>100 hours</strong> of meaningful exposure:
+            building, shipping, auditing, forecasting, mentoring, governing, or operating in that domain.
+          </p>
+          <div class="detail-section compact">
+            <h3>Hour model</h3>
+            <ul>
+              <li>Role duration weighted by the share of work that clearly sat in each domain.</li>
+              <li>Adjusted upward when the repo contains strong delivery proof, repeated practice, or measured outcomes.</li>
+              <li>Adjusted downward when claims are adjacent but not deeply evidenced.</li>
+              <li>Kept intentionally conservative so the story stays defensible.</li>
+            </ul>
+          </div>
+          <div class="detail-section compact">
+            <h3>Narrative frame</h3>
+            <ul>
+              <li>The roots are not old work left behind. They still feed the way you think.</li>
+              <li>The trunk is the present operating level you genuinely own today.</li>
+              <li>The branches show where the next step naturally grows, without inflating titles.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="mini-grid" id="mini-grid"></div>
+
+      <div class="assumption-note">
+        <strong>Assumption note:</strong> these hour estimates are based on the evidence already in the repo, especially the
+        capability tree, role history, and named delivery outcomes. They are meant to support storytelling, visual comparison,
+        and future MCP-style capability modelling. They should be treated as explainable estimates, not audited labour records.
+      </div>
+    </section>
+  </div>
+  <script src="./building-the-future-tree.js"></script>
+</body>
+</html>
